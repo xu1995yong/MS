@@ -33,9 +33,12 @@ public class UserController {
 
     @PostMapping("/login/do_login")
     @ResponseBody
-    public Result<String> doLogin(HttpServletResponse response, @Valid LoginVo loginVo) {// 加入JSR303参数校验
+    public Result<String> doLogin(HttpServletResponse response, @Valid LoginVo loginVo, Model model) {// 加入JSR303参数校验
         log.debug(loginVo.toString());
         String token = userService.login(response, loginVo);
+        User user = userService.getByToken(response, token);
+        log.debug(user.toString());
+        model.addAttribute("user", user);
         return Result.success(token);
     }
 

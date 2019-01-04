@@ -26,121 +26,76 @@ import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 @Controller
 @RequestMapping("/goods")
 public class GoodsController {
-	private static Logger log = LoggerFactory.getLogger(GoodsController.class);
-	@Autowired
+    private static Logger log = LoggerFactory.getLogger(GoodsController.class);
+    @Autowired
     UserService userService;
 
-	@Autowired
+    @Autowired
     RedisService redisService;
 
-	@Autowired
+    @Autowired
     GoodsService goodsService;
 
-//	@Autowired
-//	ApplicationContext applicationContext;
 
-	@Autowired
-	ThymeleafViewResolver thymeleafViewResolver;
+    @RequestMapping(value = "/list")
+    public String list(Model model, User user) {
 
-	@RequestMapping(value = "/list")
-	public String list(Model model, User user) {
+        List<GoodsVo> goodsList = goodsService.listGoodsVo();
+        log.debug(user.toString());
+        model.addAttribute("user", user);
+        model.addAttribute("goodsList", goodsList);
 
-		List<GoodsVo> goodsList = goodsService.listGoodsVo();
-		model.addAttribute("user", user);
-		model.addAttribute("goodsList", goodsList);
+        return "goodsList";
+    }
 
-		return "goodsList";
-	}
-//	@RequestMapping(value = "/list", produces = "text/html")
-//	@ResponseBody
-//	public String list(HttpServletRequest request, HttpServletResponse response, Model model, User user) {
-//
-//		// 取缓存
-////		String html = redisService.get(GoodsKey.getGoodsList, "", String.class);
-////		if (!StringUtils.isEmpty(html)) {
-////			log.debug("从缓存中获取GoodsList");
-////			return html;
-////		}
-//		List<GoodsVo> goodsList = goodsService.listGoodsVo();
-//		model.addAttribute("user", user);
-//		model.addAttribute("goodsList", goodsList);
-//
-////		// 手动渲染
-////		WebContext ctx = new WebContext(request, response, request.getServletContext(), request.getLocale(),
-////				model.asMap());
-////		html = thymeleafViewResolver.getTemplateEngine().process("goods_list", ctx);
-////
-////		if (!StringUtils.isEmpty(html)) {
-////			redisService.set(GoodsKey.getGoodsList, "", html);
-////			log.debug("GoodsList已添加到缓存");
-////		}
-////		log.debug(user.toString());
-////		return html;
-//
-//	}
 
-	@RequestMapping(value = "/detail/{goodsId}")
-//	@ResponseBody
-	public String detail(Model model, User user, @PathVariable("goodsId") long goodsId) {
+    @RequestMapping(value = "/detail/{goodsId}")
+    public String detail(Model model, User user, @PathVariable("goodsId") long goodsId) {
 
-//		// 取缓存
-//		String  html = redisService.get(GoodsKey.getGoodsDetail, "" + goodsId, String.class);
-//		if (!StringUtils.isEmpty(html)) {
-//			return html;
-//		}
+        model.addAttribute("user", user);
+        log.debug(user.toString());
+        GoodsVo goods = goodsService.getGoodsVoByGoodsId(goodsId);
+        model.addAttribute("goods", goods);
 
-		model.addAttribute("user", user);
-		GoodsVo goods = goodsService.getGoodsVoByGoodsId(goodsId);
-		model.addAttribute("goods", goods);
+        log.debug(goods.toString());
 
-		log.debug(goods.toString());
 
-		// 手动渲染
-//		WebContext ctx = new WebContext(request, response, request.getServletContext(), request.getLocale(),
-//				model.asMap());
-//
-//		html = thymeleafViewResolver.getTemplateEngine().process("goods_detail", ctx);
-//		if (!StringUtils.isEmpty(html)) {
-//			redisService.set(GoodsKey.getGoodsDetail, "" + goodsId, html);
-//		}
-//		return html;
+        return "goodsDetail";
+    }
 
-		return "goodsDetail";
-	}
-
-	@GetMapping(value = "/detailToJson/{goodsId}")
-	@ResponseBody
-	public Result<GoodsDetailVo> detailToJson(HttpServletRequest request, HttpServletResponse response, Model model,
+    @GetMapping(value = "/detailToJson/{goodsId}")
+    @ResponseBody
+    public Result<GoodsDetailVo> detailToJson(HttpServletRequest request, HttpServletResponse response, Model model,
                                               User user, @PathVariable("goodsId") long goodsId) {
 
-		// 根据id查询商品详情
-		GoodsVo goods = goodsService.getGoodsVoByGoodsId(goodsId);
-		model.addAttribute("goods", goods);
+        // 根据id查询商品详情
+        GoodsVo goods = goodsService.getGoodsVoByGoodsId(goodsId);
+        model.addAttribute("goods", goods);
 
-		long startTime = goods.getStartDate().getTime();
-		long endTime = goods.getEndDate().getTime();
-		long now = System.currentTimeMillis();
+        long startTime = goods.getStartDate().getTime();
+        long endTime = goods.getEndDate().getTime();
+        long now = System.currentTimeMillis();
 
-		int seckillStatus = 0;
-		int remainSeconds = 0;
+        int seckillStatus = 0;
+        int remainSeconds = 0;
 
-		if (now < startTime) {// 秒杀还没开始，倒计时
-			seckillStatus = 0;
-			remainSeconds = (int) ((startTime - now) / 1000);
-		} else if (now > endTime) {// 秒杀已经结束
-			seckillStatus = 2;
-			remainSeconds = -1;
-		} else {// 秒杀进行中
-			seckillStatus = 1;
-			remainSeconds = 0;
-		}
-		GoodsDetailVo vo = new GoodsDetailVo();
-		vo.setGoods(goods);
-		vo.setUser(user);
-		vo.setRemainSeconds(remainSeconds);
-		vo.setSeckillStatus(seckillStatus);
+        if (now < startTime) {// 秒杀还没开始，倒计时
+            seckillStatus = 0;
+            remainSeconds = (int) ((startTime - now) / 1000);
+        } else if (now > endTime) {// 秒杀已经结束
+            seckillStatus = 2;
+            remainSeconds = -1;
+        } else {// 秒杀进行中
+            seckillStatus = 1;
+            remainSeconds = 0;
+        }
+        GoodsDetailVo vo = new GoodsDetailVo();
+        vo.setGoods(goods);
+        vo.setUser(user);
+        vo.setRemainSeconds(remainSeconds);
+        vo.setSeckillStatus(seckillStatus);
 
-		return Result.success(vo);
-	}
+        return Result.success(vo);
+    }
 
 }

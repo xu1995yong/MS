@@ -129,7 +129,7 @@ public class SeckillController implements InitializingBean {
         SeckillMessage message = new SeckillMessage();
         message.setUser(user);
         message.setGoodsId(goodsId);
-
+        log.debug(user.toString());
         log.debug(message.toString());
 
         sender.sendSeckillMessage(message);
