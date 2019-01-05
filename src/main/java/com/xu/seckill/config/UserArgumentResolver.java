@@ -2,9 +2,13 @@ package com.xu.seckill.config;
 
 import com.alibaba.druid.util.StringUtils;
 import com.xu.seckill.bean.User;
+import com.xu.seckill.controller.SeckillController;
 import com.xu.seckill.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -15,21 +19,14 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * Created by jiangyunxiong on 2018/5/22.
- */
-@Service
-public class UserArgumentResolver implements HandlerMethodArgumentResolver {
 
+@Component
+public class UserArgumentResolver implements HandlerMethodArgumentResolver {
+    private static Logger log = LoggerFactory.getLogger(UserArgumentResolver.class);
     @Autowired
     UserService userService;
 
-    /**
-     * 当参数类型为User才做处理
-     *
-     * @param methodParameter
-     * @return
-     */
+    //当参数类型为User才做处理
     @Override
     public boolean supportsParameter(MethodParameter methodParameter) {
         //获取参数类型
@@ -62,9 +59,11 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
         }
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals(cookiName)) {
+                log.debug("获取到token: "+cookie.getValue());
                 return cookie.getValue();
             }
         }
+        log.debug("没有获取到token");
         return null;
     }
 }

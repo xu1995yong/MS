@@ -41,7 +41,6 @@ public class GoodsController {
     public String list(Model model, User user) {
 
         List<GoodsVo> goodsList = goodsService.listGoodsVo();
-        log.debug(user.toString());
         model.addAttribute("user", user);
         model.addAttribute("goodsList", goodsList);
 
