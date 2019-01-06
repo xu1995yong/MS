@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class MQSender {
 
-	private static Logger log = LoggerFactory.getLogger(MQSender.class);
+    private static Logger log = LoggerFactory.getLogger(MQSender.class);
 
-	@Autowired
-	AmqpTemplate amqpTemplate;
+    @Autowired
+    AmqpTemplate amqpTemplate;
 
 //    public void send(Object message){
 //        String msg = RedisService.beanToString(message);
@@ -28,8 +28,8 @@ public class MQSender {
 //		amqpTemplate.convertAndSend(MQConfig.TOPIC_EXCHANGE, "topic.key2", msg + "2");
 //	}
 
-	public void sendSeckillMessage(SeckillMessage message) {
-		String msg = RedisService.beanToString(message);
-		amqpTemplate.convertAndSend(MQConfig.SECKILL_QUEUE, msg);
-	}
+    public void sendSeckillMessage(SeckillMessage message) {
+        String msg = RedisService.beanToString(message);
+        amqpTemplate.convertAndSend(MQConfig.QUEUE, msg);
+    }
 }

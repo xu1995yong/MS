@@ -1,6 +1,7 @@
 package com.xu.seckill.service;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.mysql.cj.x.protobuf.MysqlxDatatypes;
@@ -9,6 +10,7 @@ import com.xu.seckill.mapper.UserMapper;
 import com.xu.seckill.redis.RedisService;
 import com.xu.seckill.redis.UserKey;
 import com.xu.seckill.result.CodeMsg;
+import com.xu.seckill.util.CookieUtils;
 import com.xu.seckill.vo.LoginVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -98,6 +100,14 @@ public class UserService {
         cookie.setMaxAge(UserKey.token.expireSeconds());
         cookie.setPath("/");// 设置为网站根目录
         response.addCookie(cookie);
+    }
+
+
+    public void logout(HttpServletRequest request, HttpServletResponse response, User user) {
+        Cookie[] cookies = request.getCookies();
+        Cookie cookie = CookieUtils.delCookieByName(cookies, COOKIE_NAME_TOKEN);
+        response.addCookie(cookie);
+        redisService.delete(UserKey.getById, "" + user.getId());
     }
 
     /**

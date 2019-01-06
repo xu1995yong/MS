@@ -10,10 +10,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -26,7 +28,7 @@ public class UserController {
     @Autowired
     RedisService redisService;
 
-    @RequestMapping("/")
+    @RequestMapping("/login/login")
     public String toLogin() {
         return "login";
     }
@@ -36,6 +38,12 @@ public class UserController {
     public Result<String> doLogin(HttpServletResponse response, @Valid LoginVo loginVo, Model model) {// 加入JSR303参数校验
         String token = userService.login(response, loginVo);
         return Result.success(token);
+    }
+
+    @GetMapping("/user/logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response, User user) {
+        userService.logout(request, response, user);
+        return "login";
     }
 
     @RequestMapping("/user/info")

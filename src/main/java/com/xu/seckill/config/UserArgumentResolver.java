@@ -4,6 +4,7 @@ import com.alibaba.druid.util.StringUtils;
 import com.xu.seckill.bean.User;
 import com.xu.seckill.controller.SeckillController;
 import com.xu.seckill.service.UserService;
+import com.xu.seckill.util.CookieUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,28 +43,16 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
         HttpServletRequest request = nativeWebRequest.getNativeRequest(HttpServletRequest.class);
         HttpServletResponse response = nativeWebRequest.getNativeResponse(HttpServletResponse.class);
 
-        String paramToken = request.getParameter(UserService.COOKIE_NAME_TOKEN);
-        String cookieToken = getCookieValue(request, UserService.COOKIE_NAME_TOKEN);
-        if (StringUtils.isEmpty(cookieToken) && StringUtils.isEmpty(paramToken)) {
-            return null;
-        }
-        String token = StringUtils.isEmpty(paramToken) ? cookieToken : paramToken;
-        return userService.getByToken(response, token);
+        // String paramToken = request.getParameter(UserService.COOKIE_NAME_TOKEN);
+        Cookie[] cookies = request.getCookies();
+        String tokenName = UserService.COOKIE_NAME_TOKEN;
+        String cookieToken = CookieUtils.getCookieByName(cookies, tokenName);
+//        if (StringUtils.isEmpty(cookieToken) && StringUtils.isEmpty(paramToken)) {
+//            return null;
+//        }
+//        String token = StringUtils.isEmpty(paramToken) ? cookieToken : paramToken;
+        return userService.getByToken(response, cookieToken);
     }
 
-    //遍历所有cookie，找到需要的那个cookie
-    private String getCookieValue(HttpServletRequest request, String cookiName) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies == null || cookies.length <= 0) {
-            return null;
-        }
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals(cookiName)) {
-                log.debug("获取到token: "+cookie.getValue());
-                return cookie.getValue();
-            }
-        }
-        log.debug("没有获取到token");
-        return null;
-    }
+
 }

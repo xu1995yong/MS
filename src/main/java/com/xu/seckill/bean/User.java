@@ -3,7 +3,7 @@ package com.xu.seckill.bean;
 import java.util.Date;
 
 public class User {
-	private Long id;
+	private long id;
 	private String nickname;
 	private String password;
 	private String salt;

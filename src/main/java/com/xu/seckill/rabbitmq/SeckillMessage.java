@@ -1,31 +1,27 @@
 package com.xu.seckill.rabbitmq;
 
-import com.xu.seckill.bean.User;
-
-
 public class SeckillMessage {
+    private long userId;
+    private long goodsId;
+
+    public SeckillMessage(long userId, long goodsId) {
+        this.userId = userId;
+        this.goodsId = goodsId;
+    }
 
     @Override
     public String toString() {
-        return "SeckillMessage [user=" + user + ", goodsId=" + goodsId + "]";
+        return "SeckillMessage{" +
+                "userId=" + userId +
+                ", goodsId=" + goodsId +
+                '}';
     }
 
-    private User user;
-    private long goodsId;
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
+    public long getUserId() {
+        return userId;
     }
 
     public long getGoodsId() {
         return goodsId;
-    }
-
-    public void setGoodsId(long goodsId) {
-        this.goodsId = goodsId;
     }
 }

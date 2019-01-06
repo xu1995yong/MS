@@ -3,6 +3,7 @@ package com.xu.seckill.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -15,11 +16,21 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Autowired
     UserArgumentResolver userArgumentResolver;
-
+    @Autowired
+    LoginInterceptor loginInterceptor;
 
     // SpringMVC框架回调addArgumentResolvers，然后给Controller的参数赋值
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         argumentResolvers.add(userArgumentResolver);
     }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        // 注册监控拦截器
+        registry.addInterceptor(loginInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/login/**", "/js/**", "/img/**", "/bootstrap/**", "/jquery-validation/**", "/layer/**");
+    }
+
 }

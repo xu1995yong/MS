@@ -56,7 +56,28 @@ function domiaosha(path) {
 		},
 		success : function(data) {
 			if (data.code == 0) {
-				layer.msg("正在秒杀中，请稍后在订单页中查看结果");
+				layer.msg("请稍后......");
+
+			} else {
+				layer.msg(data.data)
+			}
+		},
+		error : function() {
+			layer.msg("客户端错误")
+		}
+	})
+}
+function getResult(path) {
+	$.ajax({
+		url : "/seckill/" + path + "/do_seckill",// 安全优化，带着这个path去访问
+		type : "POST",
+		data : {
+			goodsId : $("#goodsId").html()
+		},
+		success : function(data) {
+			if (data.code == 0) {
+				layer.msg("请稍后......");
+
 			} else {
 				layer.msg(data.data)
 			}
