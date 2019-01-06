@@ -28,7 +28,7 @@ public class MQSender {
 //		amqpTemplate.convertAndSend(MQConfig.TOPIC_EXCHANGE, "topic.key2", msg + "2");
 //	}
 
-    public void sendSeckillMessage(SeckillMessage message) {
+    public void sendMessage(SeckillMessage message) {
         String msg = RedisService.beanToString(message);
         amqpTemplate.convertAndSend(MQConfig.QUEUE, msg);
     }
