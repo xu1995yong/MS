@@ -33,7 +33,6 @@ function getPath() {
 			success : function(data) {
 				if (data.code == 0) {//
 					var path = data.data;
-					layer.msg(path);
 					domiaosha(path);
 				} else {
 					layer.msg(data.data)
