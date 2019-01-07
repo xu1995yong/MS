@@ -28,8 +28,8 @@ public class UserService {
 
     public static final String COOKIE_NAME_TOKEN = "token";
 
-    public User getById(long id) {
-        return userMapper.getById(id);
+    public User getByPhone(String phone) {
+        return userMapper.getByPhone(phone);
     }
 
     /**
@@ -59,7 +59,7 @@ public class UserService {
         String mobile = loginVo.getMobile();
         String formPass = loginVo.getPassword();
         // 判断手机号是否存在
-        User user = getById(Long.parseLong(mobile));
+        User user = getByPhone(mobile);
         if (user == null) {
             throw new GlobalException(CodeMsg.USER_ERROR);
         }

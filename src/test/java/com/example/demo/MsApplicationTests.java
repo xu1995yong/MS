@@ -110,10 +110,9 @@ public class MsApplicationTests {
 
     @Test
     public void testRedis() {
-        User user = new User(1L, "1", "2");
-
-        redisService.set(UserKey.ID, "id", user);
-        User u = (User) redisService.get(UserKey.ID, "id");
-        System.out.println(u);
+        MSGoods msGoods = goodsService.getMSGoodsById(1);
+        System.out.println(msGoods);
+        redisService.set(GoodsKey.GOODS_DETAIL, "id", msGoods);
+        System.out.println(redisService.get(GoodsKey.GOODS_DETAIL, "id"));
     }
 }

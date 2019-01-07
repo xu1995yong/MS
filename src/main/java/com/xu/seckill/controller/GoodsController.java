@@ -40,7 +40,7 @@ public class GoodsController {
 
 
     @RequestMapping(value = "/detail/{goodsId}")
-    public String detail(Model model, @PathVariable("msGoodsId") long msGoodsId) {
+    public String detail(Model model, @PathVariable("goodsId") long msGoodsId) {
         MSGoods msGoods = goodsService.getMSGoodsById(msGoodsId);
         model.addAttribute("goods", msGoods);
 

@@ -10,9 +10,9 @@ import org.apache.ibatis.annotations.Update;
 @Mapper
 public interface UserMapper {
 
-    @Select("select * from sk_user where id = #{id}")
-    User getById(@Param("id") long id);
+    @Select("select * from ms_user where phone = #{phone}")
+    User getByPhone(@Param("id") String phone);
 
-    @Update("update sk_user set password = #{password} where id = #{id}")
+    @Update("update ms_user set password = #{password} where id = #{id}")
     void update(User toBeUpdate);
 }

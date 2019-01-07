@@ -40,7 +40,7 @@ public class SeckillService {
     @Transactional
     public boolean seckill(User user, MSGoods msGoods) {
         // 减库存
-        boolean success = goodsService.reduceGoodsStock(msGoods.getGoodsId());
+        boolean success = goodsService.reduceGoodsStock(msGoods.getId());
         if (success) {
             // 下订单 写入秒杀订单
 //            MSOrder order = orderService.createOrder(user, msGoods);

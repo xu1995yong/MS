@@ -28,12 +28,13 @@ public class GoodsService {
     }
 
     public MSGoods getMSGoodsById(long msGoodsId) {
-        MSGoods mSGoods = (MSGoods) redisService.get(GoodsKey.GOODS_DETAIL, "" + msGoodsId);
-        if (Objects.isNull(mSGoods)) {
-            mSGoods = msGoodsMapper.getMSGoodsById(msGoodsId);
-            redisService.set(GoodsKey.GOODS_DETAIL, "" + msGoodsId, mSGoods);
+        //   MSGoods mSGoods = (MSGoods) redisService.get(GoodsKey.GOODS_DETAIL, "" + msGoodsId);
+        MSGoods msGoods = null;
+        if (Objects.isNull(msGoods)) {
+            msGoods = msGoodsMapper.getMSGoodsById(msGoodsId);
+            //redisService.set(GoodsKey.GOODS_DETAIL, "" + msGoodsId, mSGoods);
         }
-        return mSGoods;
+        return msGoods;
     }
 
     public boolean reduceGoodsStock(Long mSGoodsId) {

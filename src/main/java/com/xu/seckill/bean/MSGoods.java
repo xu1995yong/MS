@@ -3,80 +3,87 @@ package com.xu.seckill.bean;
 import java.sql.Timestamp;
 
 public class MSGoods {
-    private Long goodsId;
-    private String goodsName;
-    private String goodsTitle;
-    private String goodsImg;
-    private String goodsDetail;
-    private Double goodsPrice;
-    private Integer goodsStock;
-    private Double seckillPrice;
+    private Long id;
+    private String name;
+    private String title;
+    private String img;
+    private String detail;
+    private Double price;
+    private Integer stock;
     private Timestamp startDate;
     private Timestamp endDate;
     private int version;
 
-    public Long getGoodsId() {
-        return goodsId;
+    public MSGoods() {
     }
 
-    public void setGoodsId(Long goodsId) {
-        this.goodsId = goodsId;
+    public MSGoods(Long id, String name, String title, String img, String detail, Double price, Integer stock, Timestamp startDate, Timestamp endDate, int version) {
+        this.id = id;
+        this.name = name;
+        this.title = title;
+        this.img = img;
+        this.detail = detail;
+        this.price = price;
+        this.stock = stock;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.version = version;
     }
 
-    public String getGoodsName() {
-        return goodsName;
+    public Long getId() {
+        return id;
     }
 
-    public void setGoodsName(String goodsName) {
-        this.goodsName = goodsName;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public String getGoodsTitle() {
-        return goodsTitle;
+    public String getName() {
+        return name;
     }
 
-    public void setGoodsTitle(String goodsTitle) {
-        this.goodsTitle = goodsTitle;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getGoodsImg() {
-        return goodsImg;
+    public String getTitle() {
+        return title;
     }
 
-    public void setGoodsImg(String goodsImg) {
-        this.goodsImg = goodsImg;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getGoodsDetail() {
-        return goodsDetail;
+    public String getImg() {
+        return img;
     }
 
-    public void setGoodsDetail(String goodsDetail) {
-        this.goodsDetail = goodsDetail;
+    public void setImg(String img) {
+        this.img = img;
     }
 
-    public Double getGoodsPrice() {
-        return goodsPrice;
+    public String getDetail() {
+        return detail;
     }
 
-    public void setGoodsPrice(Double goodsPrice) {
-        this.goodsPrice = goodsPrice;
+    public void setDetail(String detail) {
+        this.detail = detail;
     }
 
-    public Integer getGoodsStock() {
-        return goodsStock;
+    public Double getPrice() {
+        return price;
     }
 
-    public void setGoodsStock(Integer goodsStock) {
-        this.goodsStock = goodsStock;
+    public void setPrice(Double price) {
+        this.price = price;
     }
 
-    public Double getSeckillPrice() {
-        return seckillPrice;
+    public Integer getStock() {
+        return stock;
     }
 
-    public void setSeckillPrice(Double seckillPrice) {
-        this.seckillPrice = seckillPrice;
+    public void setStock(Integer stock) {
+        this.stock = stock;
     }
 
     public Timestamp getStartDate() {
@@ -101,5 +108,21 @@ public class MSGoods {
 
     public void setVersion(int version) {
         this.version = version;
+    }
+
+    @Override
+    public String toString() {
+        return "MSGoods{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", title='" + title + '\'' +
+                ", img='" + img + '\'' +
+                ", detail='" + detail + '\'' +
+                ", price=" + price +
+                ", stock=" + stock +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", version=" + version +
+                '}';
     }
 }

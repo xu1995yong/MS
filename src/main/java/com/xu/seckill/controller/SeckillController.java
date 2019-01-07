@@ -93,7 +93,7 @@ public class SeckillController {
         boolean exist = redisService.exists(GoodsKey.GOODS_STOCK, "" + goodsId);
         if (!exist) {
             MSGoods mSGoods = goodsService.getMSGoodsById(goodsId);
-            redisService.set(GoodsKey.GOODS_STOCK, "" + mSGoods.getGoodsId(), "" + mSGoods.getGoodsStock());
+            redisService.set(GoodsKey.GOODS_STOCK, "" + mSGoods.getId(), "" + mSGoods.getStock());
         }
 
         boolean success = redisService.decr(GoodsKey.GOODS_STOCK, "" + goodsId);

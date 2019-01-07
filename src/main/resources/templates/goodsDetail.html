@@ -30,7 +30,7 @@
 		<table class="table" id="goodslist">
 			<tr>
 				<td>商品id</td>
-				<td  id="goodsId" th:text="${goods.id}"  > </td>
+				<td  id="goodsId" th:text="${goods.goodsId}"  > </td>
 			</tr>
 			<tr>
 				<td>商品名称</td>
@@ -67,7 +67,7 @@
 			</tr>
 			<tr>
 				<td>库存数量</td>
-				<td colspan="3" th:text="${goods.stockCount}"></td>
+				<td colspan="3" th:text="${goods.goodsStock}"></td>
 			</tr>
 		</table>
 	</div>

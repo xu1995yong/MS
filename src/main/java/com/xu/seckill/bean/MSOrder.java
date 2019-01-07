@@ -11,6 +11,9 @@ public class MSOrder {
     private Integer status;
     private Date createDate;
 
+    public MSOrder() {
+    }
+
     public Long getId() {
         return id;
     }
@@ -57,5 +60,17 @@ public class MSOrder {
 
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
+    }
+
+    @Override
+    public String toString() {
+        return "MSOrder{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", msGoodsId=" + msGoodsId +
+                ", goodsCount=" + goodsCount +
+                ", status=" + status +
+                ", createDate=" + createDate +
+                '}';
     }
 }
