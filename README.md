@@ -23,7 +23,7 @@
 ### 接下来要学习
 - SpringBoot 自定义方法参数解析器HandlerMethodArgumentResolver
 - SpringBoot 拦截器做登录验证
-
+- Redis实现乐观锁的原理
 ### BUG FIX LOG
 - 关于页面中时间显示与数据库中存储不一致，原因：使用com.mysql.cj.jdbc.Driver， 需要指定时区serverTimezone，而mysql数据库使用服务器时区，
 

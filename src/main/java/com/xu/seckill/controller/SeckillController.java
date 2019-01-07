@@ -1,15 +1,16 @@
 package com.xu.seckill.controller;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-
-import com.xu.seckill.bean.SeckillOrder;
+import com.google.common.util.concurrent.RateLimiter;
 import com.xu.seckill.bean.User;
+import com.xu.seckill.rabbitmq.MQSender;
+import com.xu.seckill.rabbitmq.SeckillMessage;
+import com.xu.seckill.redis.GoodsKey;
 import com.xu.seckill.redis.RedisService;
 import com.xu.seckill.result.CodeMsg;
+import com.xu.seckill.result.Result;
+import com.xu.seckill.service.GoodsService;
+import com.xu.seckill.service.OrderService;
+import com.xu.seckill.service.SeckillService;
 import com.xu.seckill.vo.GoodsVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,16 +20,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import com.google.common.util.concurrent.RateLimiter;
-import com.xu.seckill.rabbitmq.MQSender;
-import com.xu.seckill.rabbitmq.SeckillMessage;
-import com.xu.seckill.redis.GoodsKey;
-import com.xu.seckill.result.Result;
-import com.xu.seckill.service.GoodsService;
-import com.xu.seckill.service.OrderService;
-import com.xu.seckill.service.SeckillService;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
-import javax.jws.WebParam;
 
 @Controller
 @RequestMapping("/seckill")
@@ -104,15 +101,15 @@ public class SeckillController implements InitializingBean {
             return Result.error(CodeMsg.SECKILL_OVER);
         }
         // 预减库存
-        long stock = redisService.decr(GoodsKey.getGoodsStock, "" + goodsId);// 10
-        if (stock < 0) {
-//			afterPropertiesSet();
-            long stock2 = redisService.decr(GoodsKey.getGoodsStock, "" + goodsId);// 10
-            if (stock2 < 0) {
-                localOverMap.put(goodsId, true);
-                return Result.error(CodeMsg.SECKILL_OVER);
-            }
-        }
+//        long stock = redisService.decr(GoodsKey.getGoodsStock, "" + goodsId);// 10
+//        if (stock < 0) {
+////			afterPropertiesSet();
+//            long stock2 = redisService.decr(GoodsKey.getGoodsStock, "" + goodsId);// 10
+//            if (stock2 < 0) {
+//                localOverMap.put(goodsId, true);
+//                return Result.error(CodeMsg.SECKILL_OVER);
+//            }
+//        }
         // 判断重复秒杀
 //		SeckillOrder order = orderService.getOrderByUserIdGoodsId(user.getId(), goodsId);
 //		if (order != null) {

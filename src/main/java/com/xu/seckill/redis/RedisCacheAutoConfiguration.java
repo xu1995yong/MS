@@ -16,9 +16,11 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-//@Configuration
-//@AutoConfigureAfter(RedisAutoConfiguration.class)
+@Configuration
+@AutoConfigureAfter(RedisAutoConfiguration.class)
+@EnableTransactionManagement
 public class RedisCacheAutoConfiguration {
 
 //    @Bean
@@ -30,30 +32,31 @@ public class RedisCacheAutoConfiguration {
 //        return template;
 //    }
 
-    @Bean
-    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<Object, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(connectionFactory);
-
-        //使用Jackson2JsonRedisSerializer来序列化和反序列化redis的value值（默认使用JDK的序列化方式）
-        Jackson2JsonRedisSerializer serializer = new Jackson2JsonRedisSerializer(Object.class);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-        mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
-        serializer.setObjectMapper(mapper);
-
-        template.setValueSerializer(serializer);
-        //使用StringRedisSerializer来序列化和反序列化redis的key值
-        template.setKeySerializer(new StringRedisSerializer());
-        template.afterPropertiesSet();
-        return template;
-    }
+//    @Bean
+//    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+//        RedisTemplate<Object, Object> template = new RedisTemplate<>();
+//        template.setConnectionFactory(connectionFactory);
+//
+//        //使用Jackson2JsonRedisSerializer来序列化和反序列化redis的value值（默认使用JDK的序列化方式）
+//        Jackson2JsonRedisSerializer serializer = new Jackson2JsonRedisSerializer(Object.class);
+//
+//        ObjectMapper mapper = new ObjectMapper();
+//        mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+//        mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+//        serializer.setObjectMapper(mapper);
+//
+//        template.setValueSerializer(serializer);
+//        //使用StringRedisSerializer来序列化和反序列化redis的key值
+//        template.setKeySerializer(new StringRedisSerializer());
+//        template.afterPropertiesSet();
+//        return template;
+//    }
 
     @Bean
     public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory factory) {
-        StringRedisTemplate stringRedisTemplate = new StringRedisTemplate();
-        stringRedisTemplate.setConnectionFactory(factory);
-        return stringRedisTemplate;
+        StringRedisTemplate template = new StringRedisTemplate(factory);
+        // explicitly enable transaction support
+        template.setEnableTransactionSupport(true);
+        return template;
     }
 }
