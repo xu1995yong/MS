@@ -1,6 +1,6 @@
 package com.xu.seckill.controller;
 
-import com.xu.seckill.bean.MSGoods;
+import com.xu.seckill.bean.Goods;
 import com.xu.seckill.redis.RedisService;
 import com.xu.seckill.service.GoodsService;
 import com.xu.seckill.service.UserService;
@@ -31,7 +31,7 @@ public class GoodsController {
     @RequestMapping(value = "/list")
     public String list(Model model) {
 
-        List<MSGoods> goodsList = goodsService.listGoodsVo();
+        List<Goods> goodsList = goodsService.listGoodsVo();
         //  model.addAttribute("user", user);
         model.addAttribute("goodsList", goodsList);
 
@@ -41,10 +41,10 @@ public class GoodsController {
 
     @RequestMapping(value = "/detail/{goodsId}")
     public String detail(Model model, @PathVariable("goodsId") long msGoodsId) {
-        MSGoods msGoods = goodsService.getMSGoodsById(msGoodsId);
-        model.addAttribute("goods", msGoods);
+        Goods goods = goodsService.getMSGoodsById(msGoodsId);
+        model.addAttribute("goods", goods);
 
-        log.debug(msGoods.toString());
+        log.debug(goods.toString());
 
         return "goodsDetail";
     }

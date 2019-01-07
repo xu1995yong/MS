@@ -1,7 +1,7 @@
 package com.xu.seckill.service;
 
-import com.xu.seckill.bean.MSGoods;
-import com.xu.seckill.mapper.MSGoodsMapper;
+import com.xu.seckill.bean.Goods;
+import com.xu.seckill.mapper.GoodsMapper;
 import com.xu.seckill.redis.RedisService;
 import com.xu.seckill.redis.keysPrefix.GoodsKey;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,29 +16,29 @@ public class GoodsService {
     RedisService redisService;
 
     @Autowired
-    MSGoodsMapper msGoodsMapper;
+    GoodsMapper goodsMapper;
 
-    public List<MSGoods> listGoodsVo() {
-        List<MSGoods> mSGoodsList = (List<MSGoods>) redisService.get(GoodsKey.GOODS_LIST, "");
+    public List<Goods> listGoodsVo() {
+        List<Goods> mSGoodsList = (List<Goods>) redisService.get(GoodsKey.GOODS_LIST, "");
         if (Objects.isNull(mSGoodsList)) {
-            mSGoodsList = msGoodsMapper.getMSGoodslist();
+            mSGoodsList = goodsMapper.getGoodslist();
             redisService.set(GoodsKey.GOODS_LIST, "", mSGoodsList);
         }
         return mSGoodsList;
     }
 
-    public MSGoods getMSGoodsById(long msGoodsId) {
-        //   MSGoods mSGoods = (MSGoods) redisService.get(GoodsKey.GOODS_DETAIL, "" + msGoodsId);
-        MSGoods msGoods = null;
-        if (Objects.isNull(msGoods)) {
-            msGoods = msGoodsMapper.getMSGoodsById(msGoodsId);
+    public Goods getMSGoodsById(long goodsId) {
+        //   Goods mSGoods = (Goods) redisService.get(GoodsKey.GOODS_DETAIL, "" + goodsId);
+        Goods goods = goodsMapper.getGoodsById(goodsId);
+        if (Objects.isNull(goods)) {
+
             //redisService.set(GoodsKey.GOODS_DETAIL, "" + msGoodsId, mSGoods);
         }
-        return msGoods;
+        return goods;
     }
 
-    public boolean reduceGoodsStock(Long mSGoodsId) {
-        int ret = msGoodsMapper.reduceGoodsStock(mSGoodsId);
+    public boolean reduceGoodsStock(Long goodsId) {
+        int ret = goodsMapper.reduceGoodsStock(goodsId);
         return ret > 0;
     }
 }

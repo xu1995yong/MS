@@ -36,7 +36,7 @@ public class OrderController {
 //            return Result.error(CodeMsg.ORDER_NOT_EXIST);
 //        }
 //        long goodsId = order.getGoodsId();
-//        MSGoods msGoods = goodsService.getMSGoodsById(goodsId);
+//        Goods msGoods = goodsService.getMSGoodsById(goodsId);
 //        OrderDetailVo vo = new OrderDetailVo();
 //        vo.setOrder(order);
 //        vo.setGoods(msGoods);

@@ -2,7 +2,7 @@ package com.xu.seckill.bean;
 
 import java.sql.Timestamp;
 
-public class MSGoods {
+public class Goods {
     private Long id;
     private String name;
     private String title;
@@ -14,10 +14,10 @@ public class MSGoods {
     private Timestamp endDate;
     private int version;
 
-    public MSGoods() {
+    public Goods() {
     }
 
-    public MSGoods(Long id, String name, String title, String img, String detail, Double price, Integer stock, Timestamp startDate, Timestamp endDate, int version) {
+    public Goods(Long id, String name, String title, String img, String detail, Double price, Integer stock, Timestamp startDate, Timestamp endDate, int version) {
         this.id = id;
         this.name = name;
         this.title = title;
@@ -112,7 +112,7 @@ public class MSGoods {
 
     @Override
     public String toString() {
-        return "MSGoods{" +
+        return "Goods{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", title='" + title + '\'' +

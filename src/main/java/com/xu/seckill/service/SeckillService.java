@@ -1,6 +1,6 @@
 package com.xu.seckill.service;
 
-import com.xu.seckill.bean.MSGoods;
+import com.xu.seckill.bean.Goods;
 import com.xu.seckill.bean.User;
 import com.xu.seckill.redis.RedisService;
 import com.xu.seckill.redis.keysPrefix.SeckillKey;
@@ -38,12 +38,12 @@ public class SeckillService {
 
     // 保证这三个操作，减库存 下订单 写入秒杀订单是一个事物
     @Transactional
-    public boolean seckill(User user, MSGoods msGoods) {
+    public boolean seckill(User user, Goods goods) {
         // 减库存
-        boolean success = goodsService.reduceGoodsStock(msGoods.getId());
+        boolean success = goodsService.reduceGoodsStock(goods.getId());
         if (success) {
             // 下订单 写入秒杀订单
-//            MSOrder order = orderService.createOrder(user, msGoods);
+//            MSOrder order = orderService.createOrder(user, goods);
 //            if (order != null) {
 //                return true;
 //            }

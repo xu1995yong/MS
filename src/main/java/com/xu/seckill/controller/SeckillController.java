@@ -1,7 +1,7 @@
 package com.xu.seckill.controller;
 
 import com.google.common.util.concurrent.RateLimiter;
-import com.xu.seckill.bean.MSGoods;
+import com.xu.seckill.bean.Goods;
 import com.xu.seckill.bean.User;
 import com.xu.seckill.rabbitmq.MQSender;
 import com.xu.seckill.rabbitmq.SeckillMessage;
@@ -57,7 +57,7 @@ public class SeckillController {
     @RequestMapping("/getPath")
     @ResponseBody
     public Result<String> getPath(User user, @RequestParam("goodsId") long goodsId) {
-        MSGoods mSGoods = goodsService.getMSGoodsById(goodsId);
+        Goods mSGoods = goodsService.getMSGoodsById(goodsId);
         if (Objects.isNull(mSGoods)) {
             return Result.error(CodeMsg.BIND_ERROR);
         }
@@ -92,7 +92,7 @@ public class SeckillController {
 
         boolean exist = redisService.exists(GoodsKey.GOODS_STOCK, "" + goodsId);
         if (!exist) {
-            MSGoods mSGoods = goodsService.getMSGoodsById(goodsId);
+            Goods mSGoods = goodsService.getMSGoodsById(goodsId);
             redisService.set(GoodsKey.GOODS_STOCK, "" + mSGoods.getId(), "" + mSGoods.getStock());
         }
 
