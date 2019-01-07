@@ -40,10 +40,14 @@ public class UserController {
         return Result.success(token);
     }
 
-    @GetMapping("/user/logout")
-    public String logout(HttpServletRequest request, HttpServletResponse response, User user) {
-        userService.logout(request, response, user);
-        return "login";
+    @GetMapping("/login/logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+        boolean success = userService.logout(request, response);
+
+        if (success) {
+            return "redirect:/goods/list";
+        }
+        return "error";
     }
 
     @RequestMapping("/user/info")

@@ -28,7 +28,6 @@ function getPath() {
 			url : "/seckill/getPath/",
 			data : {
 				goodsId : $("#goodsId").html()
-			// verifyCode : $("#verifyCode").val()
 			},
 			success : function(data) {
 				if (data.code == 0) {//

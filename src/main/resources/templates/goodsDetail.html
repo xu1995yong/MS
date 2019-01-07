@@ -26,9 +26,7 @@
 
 	<div class="panel panel-default">
 		<div class="panel-heading">秒杀商品详情</div>
-		<div class="panel-body">
-			<span th:if="${user eq null}"> 您还没有登录，请登陆后再操作<br /></span>
-		</div>
+
 		<table class="table" id="goodslist">
 			<tr>
 				<td>商品id</td>
@@ -55,8 +53,7 @@
 			</tr>
 			<tr>
 				<td id="seckillTip"><span id="seckillStatus"></span></td>
-				<td><span th:if="${seckillStatus eq 0}"> <span
-						id="remainingtime"></span></span></td>
+				<td>  <span id="remainingtime"></span> </td>
 				<td><input id="buyButton" class="btn btn-primary btn-block"
 					type="button" value="立即购买" onclick="getPath( )" /></td>
 			</tr>

@@ -1,4 +1,4 @@
-package com.xu.seckill.redis;
+package com.xu.seckill.redis.keysPrefix;
 
 public class UserKey extends BasePrefix {
     //TODO
@@ -9,10 +9,8 @@ public class UserKey extends BasePrefix {
         super(expireSeconds, prefix);
     }
 
-    /**
-     * 需要缓存的字段
-     */
-    public static UserKey token = new UserKey(TOKEN_EXPIRE, "token");
-    public static UserKey getById = new UserKey(0, "id");
+
+    public static UserKey TOKEN = new UserKey(TOKEN_EXPIRE, "token:"); //
+    public static UserKey ID = new UserKey(0, "id:");//
 
 }

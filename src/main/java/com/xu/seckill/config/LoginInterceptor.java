@@ -27,17 +27,18 @@ public class LoginInterceptor implements HandlerInterceptor {
         log.debug("拦截到url:" + url);
 
         Cookie[] cookies = request.getCookies();
-        String tokenName = UserService.COOKIE_NAME_TOKEN;
-        String cookieToken = CookieUtils.getCookieByName(cookies, tokenName);
-
-        log.debug("得到的token为：" + cookieToken);
-
-        if (cookieToken != null) {
-            return true;
+        if (cookies != null) {
+            String cookieToken = CookieUtils.getCookieByName(cookies, UserService.COOKIE_NAME_TOKEN).getValue();
+            log.debug("得到的token为：" + cookieToken);
+            if (cookieToken != null) {
+                return true;
+            }
+            log.debug("token is null");
         }
         // 不符合条件的，跳转到登录界面
-        request.getRequestDispatcher("/login/login").forward(request, response);
-
+//        request.getRequestDispatcher("/login/login").forward(request, response);
+        log.debug("cookie is null");
+        response.sendRedirect("/login/login");
         return false;
     }
 

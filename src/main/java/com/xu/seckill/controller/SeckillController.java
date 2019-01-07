@@ -1,30 +1,24 @@
 package com.xu.seckill.controller;
 
 import com.google.common.util.concurrent.RateLimiter;
-import com.xu.seckill.bean.Goods;
-import com.xu.seckill.bean.SeckillOrder;
+import com.xu.seckill.bean.MSGoods;
 import com.xu.seckill.bean.User;
 import com.xu.seckill.rabbitmq.MQSender;
 import com.xu.seckill.rabbitmq.SeckillMessage;
-import com.xu.seckill.redis.GoodsKey;
 import com.xu.seckill.redis.RedisService;
+import com.xu.seckill.redis.keysPrefix.GoodsKey;
 import com.xu.seckill.result.CodeMsg;
 import com.xu.seckill.result.Result;
 import com.xu.seckill.service.GoodsService;
 import com.xu.seckill.service.OrderService;
 import com.xu.seckill.service.SeckillService;
-import com.xu.seckill.vo.GoodsVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -63,14 +57,14 @@ public class SeckillController {
     @RequestMapping("/getPath")
     @ResponseBody
     public Result<String> getPath(User user, @RequestParam("goodsId") long goodsId) {
-        GoodsVo goods = goodsService.getGoodsVoByGoodsId(goodsId);
-        if (Objects.isNull(goods)) {
+        MSGoods mSGoods = goodsService.getMSGoodsById(goodsId);
+        if (Objects.isNull(mSGoods)) {
             return Result.error(CodeMsg.BIND_ERROR);
         }
-        log.debug(goods.toString());
+        log.debug(mSGoods.toString());
 
-        long startTime = goods.getStartDate().getTime();
-        long endTime = goods.getEndDate().getTime();
+        long startTime = mSGoods.getStartDate().getTime();
+        long endTime = mSGoods.getEndDate().getTime();
         long now = System.currentTimeMillis();
 
         if (now < startTime || now > endTime) {
@@ -96,13 +90,13 @@ public class SeckillController {
 
         model.addAttribute("user", user);
 
-        boolean exist = redisService.exists(GoodsKey.getGoodsStock, "" + goodsId);
+        boolean exist = redisService.exists(GoodsKey.GOODS_STOCK, "" + goodsId);
         if (!exist) {
-            GoodsVo goodsVo = goodsService.getGoodsVoByGoodsId(goodsId);
-            redisService.set(GoodsKey.getGoodsStock, "" + goodsVo.getId(), "" + goodsVo.getStockCount());
+            MSGoods mSGoods = goodsService.getMSGoodsById(goodsId);
+            redisService.set(GoodsKey.GOODS_STOCK, "" + mSGoods.getGoodsId(), "" + mSGoods.getGoodsStock());
         }
 
-        boolean success = redisService.decr(GoodsKey.getGoodsStock, "" + goodsId);
+        boolean success = redisService.decr(GoodsKey.GOODS_STOCK, "" + goodsId);
         if (!success) {
             return Result.error(CodeMsg.SECKILL_OVER);
         }

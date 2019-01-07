@@ -1,19 +1,23 @@
 package com.example.demo;
 
 import com.xu.seckill.MsApplication;
-import com.xu.seckill.redis.GoodsKey;
+import com.xu.seckill.bean.MSGoods;
 import com.xu.seckill.redis.RedisService;
+import com.xu.seckill.redis.keysPrefix.GoodsKey;
+import com.xu.seckill.service.GoodsService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.redis.core.*;
+import org.springframework.data.redis.core.RedisOperations;
+import org.springframework.data.redis.core.SessionCallback;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.*;
 
 @RunWith(SpringRunner.class)
@@ -88,7 +92,7 @@ public class MsApplicationTests {
             tasks.add(new Callable() {
                 @Override
                 public Boolean call() throws Exception {
-                    return redisService.decr(GoodsKey.getGoodsStock, String.valueOf(1));
+                    return redisService.decr(GoodsKey.GOODS_STOCK, String.valueOf(1));
                 }
             });
         }
@@ -96,5 +100,17 @@ public class MsApplicationTests {
         for (Future f : futures) {
             System.out.println(f.get());
         }
+    }
+
+    @Autowired
+    GoodsService goodsService;
+
+    @Test
+    public void testRedis() {
+        MSGoods msGoods = goodsService.getMSGoodsById(1);
+
+        redisService.set(GoodsKey.GOODS_DETAIL, "id", msGoods);
+        MSGoods g = (MSGoods) redisService.get(GoodsKey.GOODS_DETAIL, "id");
+        System.out.println(g);
     }
 }
