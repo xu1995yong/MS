@@ -87,13 +87,13 @@ public class MsApplicationTests {
         for (int i = 0; i < 15; i++) {
             tasks.add(new Callable() {
                 @Override
-                public Object call() throws Exception {
+                public Boolean call() throws Exception {
                     return redisService.decr(GoodsKey.getGoodsStock, String.valueOf(1));
                 }
             });
         }
         List<Future<Object>> futures = pool.invokeAll(tasks);
-        for (Future<Object> f : futures) {
+        for (Future f : futures) {
             System.out.println(f.get());
         }
     }

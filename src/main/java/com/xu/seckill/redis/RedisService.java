@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class RedisService {
@@ -66,25 +67,29 @@ public class RedisService {
     public boolean decr(KeyPrefix prefix, String key) {
         //    String realKey = prefix.getPrefix() + key;
         String realKey = "a";
-        System.out.println(realKey);
+//        System.out.println(realKey);
         ValueOperations ops = stringRedisTemplate.opsForValue();
         int count = Integer.valueOf((String) ops.get(realKey));
-        if (count > 0) {
+//        System.out.println(count);
+        AtomicInteger counter = new AtomicInteger(count);
+        if (counter.get() > 0) {
             SessionCallback<List<Integer>> callback = new SessionCallback() {
                 @Override
                 public List<Object> execute(RedisOperations operations) throws DataAccessException {
                     operations.watch(realKey);
                     operations.multi();
-                    ops.increment(realKey, -1);
+                    ops.set(realKey, "" + counter.decrementAndGet());
                     return operations.exec(); //包含事务中所有操作的结果
                 }
             };
             List<Integer> txResults = stringRedisTemplate.execute(callback);
-            if (txResults != null && txResults.size() != 0 && txResults.get(0) >= 0) {
-                System.out.println(txResults);
+
+            if (txResults != null && txResults.size() != 0) {
+//                Long val = Long.valueOf(txResults.get(0));
+                System.out.println(txResults.get(0));
+//                if (val >= 0) {
                 return true;
-            } else {
-                return false;
+//                }
             }
         }
         return false;

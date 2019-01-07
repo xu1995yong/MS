@@ -34,6 +34,9 @@ public class OrderController {
     @Autowired
     GoodsService goodsService;
 
+
+    //TODO 根据用户和商品id获取订单
+
     @RequestMapping("/detail/{orderId}")
     @ResponseBody
     public Result<OrderDetailVo> detail(Model model, User user, @PathVariable("orderId") long orderId) {

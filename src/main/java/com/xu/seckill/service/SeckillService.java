@@ -41,38 +41,17 @@ public class SeckillService {
 
     // 保证这三个操作，减库存 下订单 写入秒杀订单是一个事物
     @Transactional
-    public OrderInfo seckill(User user, GoodsVo goods) {
+    public boolean seckill(User user, GoodsVo goods) {
         // 减库存
-        boolean success = goodsService.reduceStock(goods);
+        boolean success = goodsService.reduceGoodsStock(goods);
         if (success) {
             // 下订单 写入秒杀订单
-            return orderService.createOrder(user, goods);
-        } else {
-            setGoodsOver(goods.getId());
-            return null;
+            OrderInfo orderInfo = orderService.createOrder(user, goods);
+            if (orderInfo != null) {
+                return true;
+            }
         }
+        return false;
     }
 
-//    public SeckillOrder getSeckillResult(long userId, long goodsId) {
-
-
-//        if (order != null) {
-//            return order.getOrderId();
-//        } else {
-//            boolean isOver = getGoodsOver(goodsId);
-//            if (isOver) {
-//                return -1;
-//            } else {
-//                return 0;
-//            }
-//        }
-//    }
-
-    private void setGoodsOver(Long goodsId) {
-        redisService.set(SeckillKey.isGoodsOver, "" + goodsId, true);
-    }
-
-    private boolean getGoodsOver(long goodsId) {
-        return redisService.exists(SeckillKey.isGoodsOver, "" + goodsId);
-    }
 }
