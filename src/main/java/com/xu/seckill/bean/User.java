@@ -1,21 +1,25 @@
 package com.xu.seckill.bean;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class User implements Serializable {
-    private long id;
-    private String phoneNumber;
+    private Long id;
+    private String phone;
     private String password;
-    private String salt;
-    private String head;
-    private Date registerDate;
-    private Date lastLoginDate;
-    private Integer loginCount;
+
+    public User() {
+
+    }
+
+    public User(Long id, String phoneNumber, String password) {
+        this.id = id;
+        this.phone = phoneNumber;
+        this.password = password;
+    }
 
     @Override
     public String toString() {
-        return "User [id=" + id + ", phoneNumber=" + phoneNumber + ", password=" + password + ", salt=" + salt + "]";
+        return "User [id=" + id + ", phoneNumber=" + phone + ", password=" + password + "]";
     }
 
     public Long getId() {
@@ -26,12 +30,12 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public String getphoneNumber() {
-        return phoneNumber;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setphoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getPassword() {
@@ -40,22 +44,6 @@ public class User implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getSalt() {
-        return salt;
-    }
-
-    public void setSalt(String salt) {
-        this.salt = salt;
-    }
-
-    public String getHead() {
-        return head;
-    }
-
-    public void setHead(String head) {
-        this.head = head;
     }
 
 

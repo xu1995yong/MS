@@ -1,9 +1,12 @@
 package com.example.demo;
 
+import com.alibaba.fastjson.JSON;
 import com.xu.seckill.MsApplication;
 import com.xu.seckill.bean.MSGoods;
+import com.xu.seckill.bean.User;
 import com.xu.seckill.redis.RedisService;
 import com.xu.seckill.redis.keysPrefix.GoodsKey;
+import com.xu.seckill.redis.keysPrefix.UserKey;
 import com.xu.seckill.service.GoodsService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -107,10 +110,10 @@ public class MsApplicationTests {
 
     @Test
     public void testRedis() {
-        MSGoods msGoods = goodsService.getMSGoodsById(1);
+        User user = new User(1L, "1", "2");
 
-        redisService.set(GoodsKey.GOODS_DETAIL, "id", msGoods);
-        MSGoods g = (MSGoods) redisService.get(GoodsKey.GOODS_DETAIL, "id");
-        System.out.println(g);
+        redisService.set(UserKey.ID, "id", user);
+        User u = (User) redisService.get(UserKey.ID, "id");
+        System.out.println(u);
     }
 }

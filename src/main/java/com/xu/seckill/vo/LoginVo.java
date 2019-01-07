@@ -4,9 +4,7 @@ import com.xu.seckill.validator.IsMobile;
 
 import javax.validation.constraints.NotNull;
 
-/**
- * Created by jiangyunxiong on 2018/5/22.
- */
+
 public class LoginVo {
 
     @NotNull
@@ -32,11 +30,4 @@ public class LoginVo {
         this.password = password;
     }
 
-    @Override
-    public String toString() {
-        return "LoginVo{" +
-                "mobile='" + mobile + '\'' +
-                ", password='" + password + '\'' +
-                '}';
-    }
 }

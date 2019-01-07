@@ -1,23 +1,21 @@
 package com.xu.seckill.service;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.alibaba.druid.util.StringUtils;
 import com.xu.seckill.bean.User;
+import com.xu.seckill.exception.GlobalException;
 import com.xu.seckill.mapper.UserMapper;
 import com.xu.seckill.redis.RedisService;
 import com.xu.seckill.redis.keysPrefix.UserKey;
 import com.xu.seckill.result.CodeMsg;
 import com.xu.seckill.util.CookieUtils;
+import com.xu.seckill.util.UUIDUtil;
 import com.xu.seckill.vo.LoginVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.druid.util.StringUtils;
-import com.xu.seckill.exception.GlobalException;
-import com.xu.seckill.util.MD5Util;
-import com.xu.seckill.util.UUIDUtil;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Service
 public class UserService {
@@ -67,9 +65,7 @@ public class UserService {
         }
         // 验证密码
         String dbPass = user.getPassword();
-        String saltDB = user.getSalt();
-        String calcPass = MD5Util.formPassToDBPass(formPass, saltDB);
-        if (!calcPass.equals(dbPass)) {
+        if (!formPass.equals(dbPass)) {
             throw new GlobalException(CodeMsg.USER_ERROR);
         }
         // 生成唯一id作为token

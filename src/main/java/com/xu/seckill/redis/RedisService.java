@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class RedisService {
 
     @Autowired
-    RedisTemplate<Object, Object> redisTemplate;
+    RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
     StringRedisTemplate stringRedisTemplate;
@@ -32,7 +32,7 @@ public class RedisService {
     public <T> void set(KeyPrefix prefix, String key, Object value) {
         String realKey = prefix.getPrefix() + key;
         int seconds = prefix.expireSeconds();// 获取过期时间
-        ValueOperations<Object, Object> vOps = redisTemplate.opsForValue();
+        ValueOperations vOps = redisTemplate.opsForValue();
         if (seconds <= 0) {
             vOps.set(realKey, value);
         } else {
@@ -42,12 +42,12 @@ public class RedisService {
 
     public boolean delete(KeyPrefix prefix, String key) {
         String realKey = prefix.getPrefix() + key;
-        return redisTemplate.delete(realKey);
+        return stringRedisTemplate.delete(realKey);
     }
 
     public <T> boolean exists(KeyPrefix prefix, String key) {
         String realKey = prefix.getPrefix() + key;
-        return redisTemplate.hasKey(realKey);
+        return stringRedisTemplate.hasKey(realKey);
     }
 
     public <T> Long incr(KeyPrefix prefix, String key) {
