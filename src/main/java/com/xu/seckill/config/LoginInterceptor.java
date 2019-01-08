@@ -21,25 +21,24 @@ public class LoginInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-
         // 获取请求的URL
         String url = request.getRequestURI();
         log.debug("拦截到url:" + url);
 
         Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            String cookieToken = CookieUtils.getCookieByName(cookies, UserService.COOKIE_NAME_TOKEN).getValue();
+
+        Cookie cookie = CookieUtils.getCookieByName(cookies, UserService.COOKIE_NAME_TOKEN);
+        if (cookie != null) {
+            String cookieToken = cookie.getValue();
             log.debug("得到的token为：" + cookieToken);
-            if (cookieToken != null) {
-                return true;
-            }
+            return true;
+        } else {
+//            request.getRequestDispatcher("/login/login").forward(request, response);
+            response.sendRedirect("/login/login");
+            log.debug("cookie is null");
             log.debug("token is null");
+            return false;
         }
-        // 不符合条件的，跳转到登录界面
-//        request.getRequestDispatcher("/login/login").forward(request, response);
-        log.debug("cookie is null");
-        response.sendRedirect("/login/login");
-        return false;
     }
 
     /**

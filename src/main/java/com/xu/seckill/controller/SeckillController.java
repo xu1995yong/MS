@@ -48,29 +48,26 @@ public class SeckillController {
 
     /***
      * 为了防止用户不断调用秒杀地址接口来机器刷单，需要在秒杀开始时才创建商品秒杀的url，并保存在redis中。
-     * 每次的url都不一样，只有真正点击秒杀按钮，才会根据商品和用户id生成对应的秒杀接口地址。
-     *
-     * @param user
-     * @param goodsId
-     * @return
+     * 每次的url都不一样，只有真正点击秒杀按钮，才会根据商品生成对应的秒杀接口地址。
      */
     @RequestMapping("/getPath")
     @ResponseBody
-    public Result<String> getPath(User user, @RequestParam("goodsId") long goodsId) {
-        Goods mSGoods = goodsService.getMSGoodsById(goodsId);
-        if (Objects.isNull(mSGoods)) {
+    public Result<String> getPath(@RequestParam("goodsId") long goodsId) {
+
+        Goods goods = goodsService.getGoodsById(goodsId);
+        if (Objects.isNull(goods)) {
             return Result.error(CodeMsg.BIND_ERROR);
         }
-        log.debug(mSGoods.toString());
+        log.debug(goods.toString());
 
-        long startTime = mSGoods.getStartDate().getTime();
-        long endTime = mSGoods.getEndDate().getTime();
+        long startTime = goods.getStartDate().getTime();
+        long endTime = goods.getEndDate().getTime();
         long now = System.currentTimeMillis();
 
         if (now < startTime || now > endTime) {
             return Result.error(CodeMsg.TIME_ERROR);
         } else {
-            String path = seckillService.createPath(user, goodsId);
+            String path = seckillService.createPath(goodsId);
             return Result.success(path);
         }
     }
@@ -80,7 +77,7 @@ public class SeckillController {
     public Result<Integer> doSeckill(Model model, User user, @RequestParam("goodsId") long goodsId,
                                      @PathVariable("uuidPath") String path) {
 
-        if (!seckillService.validPath(path, user, goodsId)) {
+        if (!seckillService.validPath(path, goodsId)) {
             return Result.error(CodeMsg.PATH_ERROR);
         }
 
@@ -88,15 +85,13 @@ public class SeckillController {
             return Result.error(CodeMsg.ACCESS_LIMIT_REACHED);
         }
 
-        model.addAttribute("user", user);
-
-        boolean exist = redisService.exists(GoodsKey.GOODS_STOCK, "" + goodsId);
+        boolean exist = redisService.exists(GoodsKey.GOODS_STOCK, goodsId);
         if (!exist) {
-            Goods mSGoods = goodsService.getMSGoodsById(goodsId);
-            redisService.set(GoodsKey.GOODS_STOCK, "" + mSGoods.getId(), "" + mSGoods.getStock());
+            Goods goods = goodsService.getGoodsById(goodsId);
+            redisService.set(GoodsKey.GOODS_STOCK, goods.getId(), goods.getStock());
         }
 
-        boolean success = redisService.decr(GoodsKey.GOODS_STOCK, "" + goodsId);
+        boolean success = redisService.decr(GoodsKey.GOODS_STOCK, goodsId);
         if (!success) {
             return Result.error(CodeMsg.SECKILL_OVER);
         }

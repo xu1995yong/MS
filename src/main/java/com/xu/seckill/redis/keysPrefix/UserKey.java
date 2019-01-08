@@ -1,16 +1,14 @@
 package com.xu.seckill.redis.keysPrefix;
 
-public class UserKey extends BasePrefix {
-    //TODO
-    public static final int TOKEN_EXPIRE = 3600 * 24 * 2;//默认两天
+public class UserKey extends KeyPrefix {
 
-
-    private UserKey(int expireSeconds, String prefix) {
-        super(expireSeconds, prefix);
+    private UserKey(String prefix) {
+        super(prefix);
     }
 
+    public static final int EXPIRE_TIME = 60 * 60 * 24;
 
-    public static UserKey TOKEN = new UserKey(TOKEN_EXPIRE, "token:"); //
-    public static UserKey ID = new UserKey(0, "id:");//
+    public static UserKey USER_TOKEN = new UserKey("USER_TOKEN:");
+    public static UserKey USER_ID = new UserKey("USER_ID:");
 
 }

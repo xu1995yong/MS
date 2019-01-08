@@ -1,11 +1,12 @@
 package com.xu.seckill.rabbitmq;
 
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.listener.RabbitListenerContainerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class MQConfig {
+public class RabbitMQConfig {
 
     public static final String QUEUE = "MS_queue";
 
@@ -14,5 +15,6 @@ public class MQConfig {
     public Queue queue() {
         return new Queue(QUEUE, true);
     }
+
 
 }

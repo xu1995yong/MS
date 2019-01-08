@@ -18,7 +18,7 @@ public class RedisService {
     @Autowired
     StringRedisTemplate stringRedisTemplate;
 
-    public Object get(KeyPrefix prefix, String key) {
+    public Object get(KeyPrefix prefix, Object key) {
         String realKey = prefix.getPrefix() + key;
         return redisTemplate.opsForValue().get(realKey);
     }
@@ -29,23 +29,17 @@ public class RedisService {
 //    }
 
 
-    public <T> void set(KeyPrefix prefix, String key, Object value) {
+    public <T> void set(KeyPrefix prefix, Object key, Object value) {
         String realKey = prefix.getPrefix() + key;
-        int seconds = prefix.expireSeconds();// 获取过期时间
-        ValueOperations vOps = redisTemplate.opsForValue();
-        if (seconds <= 0) {
-            vOps.set(realKey, value);
-        } else {
-            vOps.set(realKey, value, seconds);
-        }
+        redisTemplate.opsForValue().set(realKey, value);
     }
 
-    public boolean delete(KeyPrefix prefix, String key) {
+    public boolean delete(KeyPrefix prefix, Object key) {
         String realKey = prefix.getPrefix() + key;
         return stringRedisTemplate.delete(realKey);
     }
 
-    public <T> boolean exists(KeyPrefix prefix, String key) {
+    public <T> boolean exists(KeyPrefix prefix, Object key) {
         String realKey = prefix.getPrefix() + key;
         return stringRedisTemplate.hasKey(realKey);
     }
@@ -58,10 +52,9 @@ public class RedisService {
 
     }
 
-    public boolean decr(KeyPrefix prefix, String key) {
-        //    String realKey = prefix.getPrefix() + key;
-        String realKey = "a";
-//        System.out.println(realKey);
+    public boolean decr(KeyPrefix prefix, Object key) {
+        String realKey = prefix.getPrefix() + key;
+
         ValueOperations ops = stringRedisTemplate.opsForValue();
         int count = Integer.valueOf((String) ops.get(realKey));
 //        System.out.println(count);

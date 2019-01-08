@@ -26,7 +26,8 @@
 - Redis实现乐观锁的原理
 ### BUG FIX LOG
 - 关于页面中时间显示与数据库中存储不一致，原因：使用com.mysql.cj.jdbc.Driver， 需要指定时区serverTimezone，而mysql数据库使用服务器时区，
-
+- Ajax请求不能重定向
+- Rdis有效期 与 数据反序列化
 
 WebMvcConfigurerAdapter在spring5中被弃用，该类是WebMvcConfigurer接口的空实现，但是在jdk8中提供了接口的默认方法，所以该类不再被需要。
 可以直接实现WebMvcConfigurer接口来进行mvc的配置。

@@ -1,17 +1,26 @@
 package com.xu.seckill.bean;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 
-public class MSOrder {
+public class Order {
     private Long id;
     private Long userId;
-    private Long msGoodsId;
+    private Long goodsId;
     private Integer goodsCount;
     private Integer status;
-    private Date createDate;
+    private Timestamp createDate;
 
-    public MSOrder() {
+    public Order() {
+    }
+
+    public Order(Long userId, Long goodsId, Integer goodsCount, Integer status, Timestamp createDate) {
+        this.userId = userId;
+        this.goodsId = goodsId;
+        this.goodsCount = goodsCount;
+        this.status = status;
+        this.createDate = createDate;
     }
 
     public Long getId() {
@@ -30,12 +39,12 @@ public class MSOrder {
         this.userId = userId;
     }
 
-    public Long getMsGoodsId() {
-        return msGoodsId;
+    public Long getGoodsId() {
+        return goodsId;
     }
 
-    public void setMsGoodsId(Long msGoodsId) {
-        this.msGoodsId = msGoodsId;
+    public void setGoodsId(Long goodsId) {
+        this.goodsId = goodsId;
     }
 
     public Integer getGoodsCount() {
@@ -54,20 +63,20 @@ public class MSOrder {
         this.status = status;
     }
 
-    public Date getCreateDate() {
+    public Timestamp getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(Date createDate) {
+    public void setCreateDate(Timestamp createDate) {
         this.createDate = createDate;
     }
 
     @Override
     public String toString() {
-        return "MSOrder{" +
+        return "Order{" +
                 "id=" + id +
                 ", userId=" + userId +
-                ", msGoodsId=" + msGoodsId +
+                ", goodsId=" + goodsId +
                 ", goodsCount=" + goodsCount +
                 ", status=" + status +
                 ", createDate=" + createDate +

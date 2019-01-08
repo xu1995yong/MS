@@ -31,7 +31,7 @@ public class GoodsController {
     @RequestMapping(value = "/list")
     public String list(Model model) {
 
-        List<Goods> goodsList = goodsService.listGoodsVo();
+        List<Goods> goodsList = goodsService.getGoodsList();
         //  model.addAttribute("user", user);
         model.addAttribute("goodsList", goodsList);
 
@@ -40,8 +40,8 @@ public class GoodsController {
 
 
     @RequestMapping(value = "/detail/{goodsId}")
-    public String detail(Model model, @PathVariable("goodsId") long msGoodsId) {
-        Goods goods = goodsService.getMSGoodsById(msGoodsId);
+    public String detail(Model model, @PathVariable("goodsId") long goodsId) {
+        Goods goods = goodsService.getGoodsById(goodsId);
         model.addAttribute("goods", goods);
 
         log.debug(goods.toString());

@@ -3,7 +3,7 @@ package com.xu.seckill.bean;
 import java.sql.Timestamp;
 
 public class Goods {
-    private Long id;
+    private long id;
     private String name;
     private String title;
     private String img;

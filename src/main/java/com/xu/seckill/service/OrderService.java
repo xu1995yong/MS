@@ -1,55 +1,53 @@
 package com.xu.seckill.service;
 
+import com.xu.seckill.bean.Goods;
+import com.xu.seckill.bean.Order;
+import com.xu.seckill.bean.User;
+import com.xu.seckill.mapper.OrderMapper;
 import com.xu.seckill.redis.RedisService;
+import com.xu.seckill.redis.keysPrefix.OrderKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.Timestamp;
 
 @Service
 public class OrderService {
     private static Logger log = LoggerFactory.getLogger(OrderService.class);
-//    @Autowired
-    //  MSOrderMapper orderMapper;
+    @Autowired
+    OrderMapper orderMapper;
 
     @Autowired
     RedisService redisService;
 
-//    public SeckillOrder getOrderByUserIdGoodsId(long userId, long goodsId) {
-//        return (SeckillOrder) redisService.get(OrderKey.getSeckillOrderByUidGid, "" + userId + "_" + goodsId);
-//    }
-//
-//    public OrderInfo getOrderById(long orderId) {
-//        return orderMapper.getOrderById(orderId);
+//    public Order getOrderByUserId(long userId, long goodsId) {
+//        return (Order) redisService.get(OrderKey.getSeckillOrderByUid, "" + userId + "_" + goodsId);
 //    }
 
-    /**
-     * 因为要同时分别在订单详情表和秒杀订单表都新增一条数据，所以要保证两个操作是一个事物
-     */
-//    @Transactional
-//    public OrderInfo createOrder(User user, Goods msGoods) {
-////        OrderInfo orderInfo = new OrderInfo();
-////        orderInfo.setCreateDate(new Date());
-////        orderInfo.setDeliveryAddrId(0L);
-////        orderInfo.setGoodsCount(1);
-////        orderInfo.setGoodsId(msGoods.getGoodsId());
-////        orderInfo.setGoodsName(msGoods.getGoodsName());
-////        orderInfo.setGoodsPrice(msGoods.getSeckillPrice());
-////        orderInfo.setOrderChannel(1);
-////        orderInfo.setStatus(0);
-////        orderInfo.setUserId(user.getId());
-////        orderMapper.insert(orderInfo);
-////
-////        SeckillOrder seckillOrder = new SeckillOrder();
-////        seckillOrder.setGoodsId(msGoods.getGoodsId());
-////        seckillOrder.setOrderId(orderInfo.getId());
-////        seckillOrder.setUserId(user.getId());
-////        log.info("create order" + seckillOrder);
-////        // orderMapper.insertSeckillOrder(seckillOrder);
-////
-////        redisService.set(OrderKey.getSeckillOrderByUidGid, "" + user.getId() + "_" + msGoods.getGoodsId(), seckillOrder);
-////
-////        return orderInfo;
-//    }
+    public Order getOrderById(long orderId) {
+        Order order = (Order) redisService.get(OrderKey.ORDER_DETAIL, orderId);
+        if (order == null) {
+            order = orderMapper.getById(orderId);
+        }
+        return order;
+    }
+
+
+    public boolean createOrder(User user, Goods goods) {
+        int status = 1;
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+
+        Order order = new Order(user.getId(), goods.getId(), 1, status, now);
+        long orderId = orderMapper.insert(order);
+        order.setId(orderId);
+        if (orderId > -1) {
+            redisService.set(OrderKey.ORDER_DETAIL, orderId, order);
+        }
+        log.debug("创建订单：{}", order);
+        return true;
+    }
 
 }

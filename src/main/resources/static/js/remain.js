@@ -34,7 +34,7 @@ function getPath() {
 					var path = data.data;
 					domiaosha(path);
 				} else {
-					layer.msg(data.data)
+					window.location='/login/login'
 				}
 			},
 			error : function() {

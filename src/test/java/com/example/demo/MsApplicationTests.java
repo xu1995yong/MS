@@ -4,7 +4,9 @@ import com.xu.seckill.MsApplication;
 import com.xu.seckill.bean.Goods;
 import com.xu.seckill.redis.RedisService;
 import com.xu.seckill.redis.keysPrefix.GoodsKey;
+import com.xu.seckill.redis.keysPrefix.UserKey;
 import com.xu.seckill.service.GoodsService;
+import com.xu.seckill.vo.Person;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,9 +109,11 @@ public class MsApplicationTests {
 
     @Test
     public void testRedis() {
-        Goods goods = goodsService.getMSGoodsById(2);
+        Goods goods = goodsService.getGoodsById(1);
         System.out.println(goods);
-        redisService.set(GoodsKey.GOODS_DETAIL, "id", goods);
-        System.out.println(redisService.get(GoodsKey.GOODS_DETAIL, "id"));
+        redisService.set(GoodsKey.GOODS_DETAIL, "g", goods);
+        System.out.println(redisService.get(GoodsKey.GOODS_DETAIL, "g"));
+//        redisService.set(UserKey.ID, "id", p);
+//        System.out.println(redisService.get(UserKey.ID, "id"));
     }
 }

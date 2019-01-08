@@ -1,18 +1,22 @@
 package com.xu.seckill.service;
 
 import com.xu.seckill.bean.Goods;
+import com.xu.seckill.bean.Order;
 import com.xu.seckill.bean.User;
+import com.xu.seckill.controller.GoodsController;
 import com.xu.seckill.redis.RedisService;
 import com.xu.seckill.redis.keysPrefix.SeckillKey;
 import com.xu.seckill.util.MD5Util;
 import com.xu.seckill.util.UUIDUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class SeckillService {
-
+    private static Logger log = LoggerFactory.getLogger(SeckillService.class);
     @Autowired
     GoodsService goodsService;
 
@@ -24,14 +28,19 @@ public class SeckillService {
 
     private final String salt = "12sadasadsafafsafs。/。，";
 
-    public String createPath(User user, long goodsId) {
+    public String createPath(long goodsId) {
+        String path = (String) redisService.get(SeckillKey.SECKILL_PATH, goodsId);
+        if (path != null) {
+            return path;
+        }
         String str = MD5Util.md5(UUIDUtil.uuid() + salt);
-        redisService.set(SeckillKey.SECKILL_PATH, "" + user.getId() + ":" + goodsId, str);
+        log.debug("{}号商品路径为：{}", goodsId, str);
+        redisService.set(SeckillKey.SECKILL_PATH, goodsId, str);
         return str;
     }
 
-    public boolean validPath(String path, User user, long goodsId) {
-        String str = (String) redisService.get(SeckillKey.SECKILL_PATH, "" + user.getId() + ":" + goodsId);
+    public boolean validPath(String path, long goodsId) {
+        String str = (String) redisService.get(SeckillKey.SECKILL_PATH, goodsId);
         return path.equals(str);
     }
 
@@ -39,14 +48,10 @@ public class SeckillService {
     // 保证这三个操作，减库存 下订单 写入秒杀订单是一个事物
     @Transactional
     public boolean seckill(User user, Goods goods) {
-        // 减库存
-        boolean success = goodsService.reduceGoodsStock(goods.getId());
-        if (success) {
-            // 下订单 写入秒杀订单
-//            MSOrder order = orderService.createOrder(user, goods);
-//            if (order != null) {
-//                return true;
-//            }
+        boolean reduceSuccess = goodsService.reduceGoodsStock(goods.getId());
+        if (reduceSuccess) {
+            boolean createSuccess = orderService.createOrder(user, goods);
+            return createSuccess && reduceSuccess;
         }
         return false;
     }

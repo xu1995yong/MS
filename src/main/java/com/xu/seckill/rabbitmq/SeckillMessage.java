@@ -1,6 +1,8 @@
 package com.xu.seckill.rabbitmq;
 
-public class SeckillMessage {
+import java.io.Serializable;
+
+public class SeckillMessage implements Serializable {
     private long userId;
     private long goodsId;
 

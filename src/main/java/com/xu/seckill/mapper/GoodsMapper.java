@@ -18,7 +18,7 @@ public interface GoodsMapper {
     Goods getGoodsById(@Param("goodsId") long goodsId);
 
     // stock_count > 0 和 版本号实现乐观锁 防止超卖
-    @Update("update ms_goods set stock = stock - 1, version= version + 1 where id = #{goodsId} and stock > 0")
-    int reduceGoodsStock(@Param("mSGoodsId") long goodsId);
+    @Update("update ms_goods set stock = stock - 1, version= version + 1 where id = #{id} and stock > 0")
+    int reduceGoodsStock(@Param("id") long id);
 
 }

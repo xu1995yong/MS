@@ -28,6 +28,10 @@ public class UserService {
 
     public static final String COOKIE_NAME_TOKEN = "token";
 
+    public User getById(long id) {
+        return userMapper.getById(id);
+    }
+
     public User getByPhone(String phone) {
         return userMapper.getByPhone(phone);
     }
@@ -52,11 +56,15 @@ public class UserService {
 //        redisService.set(UserKey.token, token, user);
 //        return true;
 //    }
-    public String login(HttpServletResponse response, LoginVo loginVo) {
+    public String login(HttpServletRequest request, HttpServletResponse response, LoginVo loginVo) {
         if (loginVo == null) {
             throw new GlobalException(CodeMsg.SERVER_ERROR);
         }
-        String mobile = loginVo.getMobile();
+        boolean success = logout(request, response);
+//        if (!success) {
+//            return null;
+//        }
+        String mobile = loginVo.getPhone();
         String formPass = loginVo.getPassword();
         // 判断手机号是否存在
         User user = getByPhone(mobile);
@@ -70,7 +78,7 @@ public class UserService {
         }
         // 生成唯一id作为token
         String token = UUIDUtil.uuid();
-        redisService.set(UserKey.TOKEN, token, user);
+        redisService.set(UserKey.USER_TOKEN, token, user);
         addCookie(response, token);
         return token;
     }
@@ -80,7 +88,7 @@ public class UserService {
      */
     public void addCookie(HttpServletResponse response, String token) {
         Cookie cookie = new Cookie(COOKIE_NAME_TOKEN, token);
-        cookie.setMaxAge(UserKey.TOKEN.expireSeconds());
+        cookie.setMaxAge(UserKey.USER_TOKEN.EXPIRE_TIME);
         cookie.setPath("/");// 设置为网站根目录
         response.addCookie(cookie);
     }
@@ -89,10 +97,13 @@ public class UserService {
     public boolean logout(HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = request.getCookies();
         Cookie cookie = CookieUtils.getCookieByName(cookies, COOKIE_NAME_TOKEN);
-        boolean success = redisService.delete(UserKey.TOKEN, "" + cookie.getValue());
-        Cookie newcookie = CookieUtils.delCookie(cookies, cookie);
-        response.addCookie(newcookie);
-        return success;
+        if (cookie != null) {
+            boolean success = redisService.delete(UserKey.USER_TOKEN, "" + cookie.getValue());
+            Cookie newcookie = CookieUtils.delCookie(cookies, cookie);
+            response.addCookie(newcookie);
+            return success;
+        }
+        return true;
     }
 
 
@@ -100,7 +111,7 @@ public class UserService {
         if (StringUtils.isEmpty(token)) {
             return null;
         }
-        User user = (User) redisService.get(UserKey.TOKEN, token);
+        User user = (User) redisService.get(UserKey.USER_TOKEN, token);
         // 延长有效期，有效期等于最后一次操作+有效期
         if (user != null) {
             addCookie(response, token);

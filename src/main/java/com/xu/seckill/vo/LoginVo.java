@@ -7,19 +7,17 @@ import javax.validation.constraints.NotNull;
 
 public class LoginVo {
 
-    @NotNull
-    @IsMobile  //因为框架没有校验手机格式注解，所以自己定义
-    private String mobile;
+    //因为框架没有校验手机格式注解，所以自己定义
+    private String phone;
 
-    @NotNull
     private String password;
 
-    public String getMobile() {
-        return mobile;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getPassword() {
@@ -30,4 +28,11 @@ public class LoginVo {
         this.password = password;
     }
 
+    @Override
+    public String toString() {
+        return "LoginVo{" +
+                "phone='" + phone + '\'' +
+                ", password='" + password + '\'' +
+                '}';
+    }
 }

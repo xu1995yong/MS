@@ -1,9 +1,16 @@
 package com.xu.seckill.redis.keysPrefix;
 
-public interface KeyPrefix {
-    //有效期
-    int expireSeconds();
+public class KeyPrefix {
 
-    // 前缀
-    String getPrefix();
+    private String prefix;
+
+
+    public KeyPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
+    public String getPrefix() {
+        String className = getClass().getSimpleName();
+        return className + ":" + prefix;
+    }
 }
