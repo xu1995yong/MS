@@ -30,18 +30,17 @@ public class OrderController {
     GoodsService goodsService;
 
 
-    //TODO 根据用户和商品id获取订单
-
     @RequestMapping("/detail/{orderId}")
-    public String detail(Model model, @PathVariable("orderId") long orderId) {
+    public String detail(Model model, @PathVariable("orderId") String orderId) {
 
         Order order = orderService.getOrderById(orderId);
         if (order == null) {
-            String errMsg = "该订单不存在！";
+            String errMsg = "服务器忙，请稍后再试";
             model.addAttribute("errMsg", errMsg);
             return "seckillFail";
         }
-        Goods goods = goodsService.getGoodsById(orderId);
+        long goodsId = order.getGoodsId();
+        Goods goods = goodsService.getGoodsById(goodsId);
         model.addAttribute("order", order);
         model.addAttribute("goods", goods);
 

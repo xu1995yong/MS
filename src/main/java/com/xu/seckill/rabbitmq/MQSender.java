@@ -1,5 +1,6 @@
 package com.xu.seckill.rabbitmq;
 
+import com.xu.seckill.bean.Order;
 import com.xu.seckill.redis.RedisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,7 @@ public class MQSender {
     @Autowired
     AmqpTemplate amqpTemplate;
 
-    public void sendMessage(SeckillMessage message) {
-        amqpTemplate.convertAndSend(RabbitMQConfig.QUEUE, message);
+    public void sendMessage(Order order) {
+        amqpTemplate.convertAndSend(RabbitMQConfig.QUEUE, order);
     }
 }

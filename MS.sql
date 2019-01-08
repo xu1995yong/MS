@@ -11,7 +11,7 @@
  Target Server Version : 50724
  File Encoding         : 65001
 
- Date: 07/01/2019 23:25:27
+ Date: 08/01/2019 17:31:55
 */
 
 SET NAMES utf8mb4;
@@ -38,22 +38,27 @@ CREATE TABLE `ms_goods`  (
 -- ----------------------------
 -- Records of ms_goods
 -- ----------------------------
-INSERT INTO `ms_goods` VALUES (1, 'iphoneX', 'IPhone', '/img/iphonex.png', 'Apple', 7788.00, 100, '2018-12-01 00:00:00', '2020-12-30 00:00:00', 1);
-INSERT INTO `ms_goods` VALUES (2, '华为 Mate 10', 'Huawei/华为 Mate 10 6G+128G 全网通4G智能手机', '/img/meta10.png', 'Huawei/华为 Mate 10 6G+128G 全网通4G智能手机', 4199.00, 100, '2018-12-01 00:00:00', '2020-12-30 00:00:00', 1);
+INSERT INTO `ms_goods` VALUES (1, 'iphoneX', 'IPhone', '/img/iphonex.png', 'Apple', 7788.00, 99220, '2018-12-01 00:00:00', '2020-12-30 00:00:00', 2076);
+INSERT INTO `ms_goods` VALUES (2, '华为 Mate 10', 'Huawei/华为 Mate 10 6G+128G 全网通4G智能手机', '/img/meta10.png', 'Huawei/华为 Mate 10 6G+128G 全网通4G智能手机', 4199.00, 100000, '2018-12-01 00:00:00', '2020-12-30 00:00:00', 1);
 
 -- ----------------------------
 -- Table structure for ms_order
 -- ----------------------------
 DROP TABLE IF EXISTS `ms_order`;
 CREATE TABLE `ms_order`  (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `user_id` bigint(20) NOT NULL,
   `goods_id` bigint(20) NOT NULL,
   `goods_count` int(11) NOT NULL,
   `status` tinyint(4) DEFAULT NULL COMMENT '订单状态，0新建未支付，1已支付，2已发货，3已收货，4已退款，5已完成',
   `create_date` datetime(0) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of ms_order
+-- ----------------------------
+INSERT INTO `ms_order` VALUES ('AAA3B4A58218454587D4F2B56033EF1E', 1, 1, 1, 0, '2019-01-08 17:28:46');
 
 -- ----------------------------
 -- Table structure for ms_user

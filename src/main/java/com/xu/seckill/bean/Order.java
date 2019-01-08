@@ -1,11 +1,11 @@
 package com.xu.seckill.bean;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.Date;
 
 
-public class Order {
-    private Long id;
+public class Order implements Serializable {
+    private String id;
     private Long userId;
     private Long goodsId;
     private Integer goodsCount;
@@ -15,7 +15,8 @@ public class Order {
     public Order() {
     }
 
-    public Order(Long userId, Long goodsId, Integer goodsCount, Integer status, Timestamp createDate) {
+    public Order(String id, Long userId, Long goodsId, Integer goodsCount, Integer status, Timestamp createDate) {
+        this.id = id;
         this.userId = userId;
         this.goodsId = goodsId;
         this.goodsCount = goodsCount;
@@ -23,11 +24,11 @@ public class Order {
         this.createDate = createDate;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

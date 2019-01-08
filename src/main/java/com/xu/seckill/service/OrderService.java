@@ -27,24 +27,20 @@ public class OrderService {
 //        return (Order) redisService.get(OrderKey.getSeckillOrderByUid, "" + userId + "_" + goodsId);
 //    }
 
-    public Order getOrderById(long orderId) {
+    public Order getOrderById(String orderId) {
         Order order = (Order) redisService.get(OrderKey.ORDER_DETAIL, orderId);
         if (order == null) {
             order = orderMapper.getById(orderId);
+            redisService.set(OrderKey.ORDER_DETAIL, orderId, order);
         }
         return order;
     }
 
 
-    public boolean createOrder(User user, Goods goods) {
-        int status = 1;
-        Timestamp now = new Timestamp(System.currentTimeMillis());
-
-        Order order = new Order(user.getId(), goods.getId(), 1, status, now);
-        long orderId = orderMapper.insert(order);
-        order.setId(orderId);
-        if (orderId > -1) {
-            redisService.set(OrderKey.ORDER_DETAIL, orderId, order);
+    public boolean createOrder(Order order) {
+        int val = orderMapper.insert(order);
+        if (val == 1) {
+            redisService.set(OrderKey.ORDER_DETAIL, order.getId(), order);
         }
         log.debug("创建订单：{}", order);
         return true;

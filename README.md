@@ -19,11 +19,13 @@
 
 ### TODO
 - Redis乐观锁 防止超卖
+- RabbitMQ转RocketMQ
 
 ### 接下来要学习
 - SpringBoot 自定义方法参数解析器HandlerMethodArgumentResolver
 - SpringBoot 拦截器做登录验证
 - Redis实现乐观锁的原理
+
 ### BUG FIX LOG
 - 关于页面中时间显示与数据库中存储不一致，原因：使用com.mysql.cj.jdbc.Driver， 需要指定时区serverTimezone，而mysql数据库使用服务器时区，
 - Ajax请求不能重定向
@@ -36,3 +38,4 @@ WebMvcConfigurerAdapter在spring5中被弃用，该类是WebMvcConfigurer接口�
 SpringBoot 测试模块 自动注入失败，要在@SpringBootTest注解中加入启动类名(classes = MsApplication.class)
 
 docker命令 启动一个已经停止的容器 docker start 重启容器 docker restart 停止容器 docker stop
+

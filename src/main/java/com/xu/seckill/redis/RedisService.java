@@ -1,22 +1,31 @@
 package com.xu.seckill.redis;
 
 import com.xu.seckill.redis.keysPrefix.KeyPrefix;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class RedisService {
-
+    private static Logger log = LoggerFactory.getLogger(RedisService.class);
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
     StringRedisTemplate stringRedisTemplate;
+
+    @PostConstruct
+    public void initStock() {
+        //初始化库存
+        log.debug("RedisService 已经初始化成功");
+
+    }
 
     public Object get(KeyPrefix prefix, Object key) {
         String realKey = prefix.getPrefix() + key;
@@ -44,42 +53,46 @@ public class RedisService {
         return stringRedisTemplate.hasKey(realKey);
     }
 
-    public <T> Long incr(KeyPrefix prefix, String key) {
+//    public <T> Long incr(KeyPrefix prefix, String key) {
+//
+//        String realKey = prefix.getPrefix() + key;
+////		return jedis.incr(realKey);
+//        return 1L;
+//
+//    }
 
+    /**
+     * @return 如果库存不足，返回0，否则返回库存减一后的值  如果秒杀失败，返回-1
+     */
+    public long decr(KeyPrefix prefix, Object key) {
         String realKey = prefix.getPrefix() + key;
-//		return jedis.incr(realKey);
-        return 1L;
-
-    }
-
-    public boolean decr(KeyPrefix prefix, Object key) {
-        String realKey = prefix.getPrefix() + key;
-
-        ValueOperations ops = stringRedisTemplate.opsForValue();
-        int count = Integer.valueOf((String) ops.get(realKey));
-//        System.out.println(count);
-        AtomicInteger counter = new AtomicInteger(count);
-        if (counter.get() > 0) {
-            SessionCallback<List<Integer>> callback = new SessionCallback() {
+        long stock = Long.valueOf(stringRedisTemplate.opsForValue().get(realKey));
+        if (stock > 0) {
+            SessionCallback<List<Long>> callback = new SessionCallback<List<Long>>() {
                 @Override
-                public List<Object> execute(RedisOperations operations) throws DataAccessException {
+                public List<Long> execute(RedisOperations operations) throws DataAccessException {
                     operations.watch(realKey);
                     operations.multi();
-                    ops.set(realKey, "" + counter.decrementAndGet());
+                    operations.opsForValue().decrement(realKey);
                     return operations.exec(); //包含事务中所有操作的结果
                 }
             };
-            List<Integer> txResults = stringRedisTemplate.execute(callback);
+            List<Long> txResults = stringRedisTemplate.execute(callback);
+            //    log.debug("txResults {}", txResults);
 
-            if (txResults != null && txResults.size() != 0) {
-//                Long val = Long.valueOf(txResults.get(0));
-                System.out.println(txResults.get(0));
-//                if (val >= 0) {
-                return true;
-//                }
+
+            if (txResults.size() != 0) {
+                stock = txResults.get(0);
+                if (stock < 0) {
+                    return 0;
+                }
+                return stock;
+            } else {
+                return -1;
             }
+        } else {
+            return 0;
         }
-        return false;
     }
 
 }

@@ -3,15 +3,12 @@ package com.xu.seckill.controller;
 import com.google.common.util.concurrent.RateLimiter;
 import com.xu.seckill.bean.Goods;
 import com.xu.seckill.bean.User;
-import com.xu.seckill.rabbitmq.MQSender;
-import com.xu.seckill.rabbitmq.SeckillMessage;
 import com.xu.seckill.redis.RedisService;
-import com.xu.seckill.redis.keysPrefix.GoodsKey;
 import com.xu.seckill.result.CodeMsg;
 import com.xu.seckill.result.Result;
 import com.xu.seckill.service.GoodsService;
 import com.xu.seckill.service.OrderService;
-import com.xu.seckill.service.SeckillService;
+import com.xu.seckill.service.MSService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +22,8 @@ import java.util.concurrent.TimeUnit;
 
 @Controller
 @RequestMapping("/seckill")
-public class SeckillController {
-    private static Logger log = LoggerFactory.getLogger(SeckillController.class);
+public class MSController {
+    private static Logger log = LoggerFactory.getLogger(MSController.class);
     @Autowired
     GoodsService goodsService;
 
@@ -34,13 +31,11 @@ public class SeckillController {
     OrderService orderService;
 
     @Autowired
-    SeckillService seckillService;
+    MSService seckillService;
 
     @Autowired
     RedisService redisService;
 
-    @Autowired
-    MQSender sender;
 
     // 基于令牌桶算法的限流实现类
     RateLimiter rateLimiter = RateLimiter.create(10);
@@ -74,8 +69,8 @@ public class SeckillController {
 
     @PostMapping(value = "/{uuidPath}/do_seckill")
     @ResponseBody
-    public Result<Integer> doSeckill(Model model, User user, @RequestParam("goodsId") long goodsId,
-                                     @PathVariable("uuidPath") String path) {
+    public Result<String> doSeckill(User user, @RequestParam("goodsId") long goodsId,
+                                    @PathVariable("uuidPath") String path) {
 
         if (!seckillService.validPath(path, goodsId)) {
             return Result.error(CodeMsg.PATH_ERROR);
@@ -85,26 +80,13 @@ public class SeckillController {
             return Result.error(CodeMsg.ACCESS_LIMIT_REACHED);
         }
 
-        boolean exist = redisService.exists(GoodsKey.GOODS_STOCK, goodsId);
-        if (!exist) {
-            Goods goods = goodsService.getGoodsById(goodsId);
-            redisService.set(GoodsKey.GOODS_STOCK, goods.getId(), goods.getStock());
-        }
-
-        boolean success = redisService.decr(GoodsKey.GOODS_STOCK, goodsId);
-        if (!success) {
+        String orderId = seckillService.seckill(user.getId(), goodsId);
+        if (Objects.isNull(orderId)) {
+            return Result.error(CodeMsg.ACCESS_LIMIT_REACHED);
+        } else if (orderId.equals("")) {
             return Result.error(CodeMsg.SECKILL_OVER);
         }
-//         判断重复秒杀
-//        SeckillOrder order = orderService.getOrderByUserIdGoodsId(user.getId(), goodsId);
-//        if (order != null) {
-//            return Result.error(CodeMsg.REPEATE_SECKILL);
-//        }
-        SeckillMessage message = new SeckillMessage(user.getId(), goodsId);
-        log.debug(message.toString());
-
-        sender.sendMessage(message);
-        return Result.success(0);
+        return Result.success(orderId);
     }
 
 //    @GetMapping("/getResult")
