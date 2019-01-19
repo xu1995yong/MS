@@ -2,8 +2,7 @@ package com.xu.seckill.service;
 
 import com.xu.seckill.bean.Goods;
 import com.xu.seckill.bean.Order;
-import com.xu.seckill.bean.User;
-import com.xu.seckill.rabbitmq.MQSender;
+import com.xu.seckill.mq.MQSender;
 import com.xu.seckill.redis.RedisService;
 import com.xu.seckill.redis.keysPrefix.GoodsKey;
 import com.xu.seckill.redis.keysPrefix.SeckillKey;
@@ -75,8 +74,10 @@ public class MSService {
 
         long stock = redisService.decr(GoodsKey.GOODS_STOCK, goodsId);
         if (stock == -1) {
+            log.debug("秒杀失败");
             return "";
         } else if (stock == 0) {
+            log.debug("秒杀结束");
             isOver.put(goodsId, true);
             return null;
         } else {
@@ -85,7 +86,7 @@ public class MSService {
             Timestamp now = new Timestamp(System.currentTimeMillis());
             Order order = new Order(orderId, userId, goodsId, 1, status, now);
             log.debug("OrderId is {}", order);
-            sender.sendMessage(order);
+            sender.asyncSendMessage(order);
             return orderId;
         }
 

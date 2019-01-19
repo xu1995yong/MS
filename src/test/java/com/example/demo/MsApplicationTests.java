@@ -35,11 +35,12 @@ public class MsApplicationTests {
 
     @Test
     public void testSeckill() throws InterruptedException, ExecutionException {
-        int count_0 = 0;
-        int count_1 = 0;
-        ExecutorService pool = Executors.newFixedThreadPool(50);
+        int fail = 0;
+        int empthStock = 0;
+        int success = 0;
+        ExecutorService pool = Executors.newFixedThreadPool(10);
         List<Callable<String>> tasks = new ArrayList<>();
-        for (int i = 0; i < 100000; i++) {
+        for (int i = 0; i < 1000; i++) {
 
             tasks.add(new Callable<String>() {
                           @Override
@@ -51,14 +52,21 @@ public class MsApplicationTests {
         }
         List<Future<String>> futures = pool.invokeAll(tasks);
 
-//        for (Future<String> f : futures) {
-//            String str = f.get();
-//
-//        }
-//        System.out.println("一共秒杀：" + (count__1 + count_0 + count_1));
-//        System.out.println("秒杀失败" + count__1);
-        System.out.println("库存不足" + count_0);
-        System.out.println("秒杀成功" + count_1);
+        for (Future<String> f : futures) {
+            String str = f.get();
+            if (Objects.isNull(str)) {
+                empthStock++;
+            } else if (str.equals("")) {
+                fail++;
+            } else {
+                success++;
+            }
+
+        }
+        System.out.println("一共秒杀：" + (fail + empthStock + success));
+        System.out.println("秒杀失败" + fail);
+        System.out.println("库存不足" + empthStock);
+        System.out.println("秒杀成功" + success);
         pool.shutdown();
         pool.awaitTermination(1000, TimeUnit.MILLISECONDS);
     }

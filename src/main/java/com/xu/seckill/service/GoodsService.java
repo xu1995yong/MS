@@ -31,8 +31,7 @@ public class GoodsService {
         Goods goods = (Goods) redisService.get(GoodsKey.GOODS_DETAIL, goodsId);
         if (Objects.isNull(goods)) {
             goods = goodsMapper.getGoodsById(goodsId);
-
-            redisService.set(GoodsKey.GOODS_DETAIL, "" + goodsId, goods);
+            redisService.set(GoodsKey.GOODS_DETAIL, goodsId, goods);
         }
         return goods;
     }

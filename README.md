@@ -18,13 +18,15 @@
 2. 秒杀之后的业务逻辑:点击秒杀按钮，若Redis减库存成功，则转到订单页面创建订单，并使用消息队列将秒杀消息发送到mysql数据库。否则返回秒杀失败页面。
 
 ### TODO
-- Redis乐观锁 防止超卖
+- 
 - RabbitMQ转RocketMQ
 
-### 接下来要学习
+### 接下来要学习的知识点
 - SpringBoot 自定义方法参数解析器HandlerMethodArgumentResolver
 - SpringBoot 拦截器做登录验证
 - Redis实现乐观锁的原理
+### 已知BUG
+- Redis乐观锁会出现超卖
 
 ### BUG FIX LOG
 - 关于页面中时间显示与数据库中存储不一致，原因：使用com.mysql.cj.jdbc.Driver， 需要指定时区serverTimezone，而mysql数据库使用服务器时区，

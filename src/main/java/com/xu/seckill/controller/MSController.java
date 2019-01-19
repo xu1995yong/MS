@@ -77,13 +77,16 @@ public class MSController {
         }
 
         if (!rateLimiter.tryAcquire(1000, TimeUnit.MILLISECONDS)) {
+            log.debug("秒杀失败，请重试");
             return Result.error(CodeMsg.ACCESS_LIMIT_REACHED);
         }
 
         String orderId = seckillService.seckill(user.getId(), goodsId);
         if (Objects.isNull(orderId)) {
+            log.debug("秒杀失败，请重试");
             return Result.error(CodeMsg.ACCESS_LIMIT_REACHED);
         } else if (orderId.equals("")) {
+            log.debug("秒杀结束");
             return Result.error(CodeMsg.SECKILL_OVER);
         }
         return Result.success(orderId);

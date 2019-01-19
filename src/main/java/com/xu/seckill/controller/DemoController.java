@@ -1,6 +1,6 @@
 package com.xu.seckill.controller;
 
-import com.xu.seckill.rabbitmq.MQSender;
+import com.xu.seckill.mq.MQSender;
 import com.xu.seckill.redis.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
