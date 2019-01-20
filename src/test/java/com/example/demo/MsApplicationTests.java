@@ -8,6 +8,9 @@ import com.xu.seckill.redis.keysPrefix.UserKey;
 import com.xu.seckill.service.GoodsService;
 import com.xu.seckill.service.MSService;
 import com.xu.seckill.vo.Person;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.ZooDefs;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,5 +108,23 @@ public class MsApplicationTests {
 //        System.out.println(redisService.get(UserKey.ID, "id"));
     }
 
+    @Autowired
+    private CuratorFramework curatorFramework;
+    private final static String ROOT_PATH_LOCK = "rootlock";
 
+    @Test
+    public void testZookeeper() throws Exception {
+        String keyPath = "/" + ROOT_PATH_LOCK;
+
+
+        if (curatorFramework.checkExists().forPath(keyPath) == null) {
+            curatorFramework.create()
+                    .creatingParentsIfNeeded()
+                    .withMode(CreateMode.PERSISTENT)
+                    .withACL(ZooDefs.Ids.OPEN_ACL_UNSAFE)
+                    .forPath(keyPath);
+        }
+
+
+    }
 }
