@@ -23,7 +23,7 @@ public class RedisService {
     @PostConstruct
     public void initStock() {
         //初始化库存
-        log.debug("RedisService 已经初始化成功");
+        //    log.debug("RedisService 已经初始化成功");
 
     }
 
