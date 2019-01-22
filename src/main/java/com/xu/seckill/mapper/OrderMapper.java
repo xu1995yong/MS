@@ -1,10 +1,7 @@
 package com.xu.seckill.mapper;
 
 import com.xu.seckill.bean.Order;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.SelectKey;
+import org.apache.ibatis.annotations.*;
 import org.springframework.data.repository.query.Param;
 
 
@@ -27,4 +24,6 @@ public interface OrderMapper {
     @Select("select * from ms_order where id = #{id}")
     Order getById(@Param("id") String id);
 
+    @Update("UPDATE ms_order SET ms_order.status = #{status} WHERE ms_order.id = #{id}")
+    int update(Order order);
 }

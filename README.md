@@ -18,8 +18,7 @@
 2. 秒杀之后的业务逻辑:点击秒杀按钮，若Redis减库存成功，则转到订单页面创建订单，并使用消息队列将秒杀消息发送到mysql数据库。否则返回秒杀失败页面。
 
 ### TODO
-- 
-- RabbitMQ转RocketMQ
+ 
 
 ### 接下来要学习的知识点
 - SpringBoot 自定义方法参数解析器HandlerMethodArgumentResolver

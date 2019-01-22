@@ -14,9 +14,9 @@ import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 @RocketMQMessageListener(topic = "MS", consumerGroup = "order-paid-consumer")
 public class MQReceiver implements RocketMQListener<Order> {
     private static Logger log = LoggerFactory.getLogger(MQReceiver.class);

@@ -87,6 +87,7 @@ public class MSService {
             Order order = new Order(orderId, userId, goodsId, 1, status, now);
             log.debug("OrderId is {}", order);
             sender.asyncSendMessage(order);
+            sender.sendDelayMessage(order);
             return orderId;
         }
 

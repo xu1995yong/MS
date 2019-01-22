@@ -2,12 +2,20 @@ package com.example.demo;
 
 import com.xu.seckill.MsApplication;
 import com.xu.seckill.bean.Goods;
+import com.xu.seckill.bean.Order;
+import com.xu.seckill.mq.MQSender;
 import com.xu.seckill.redis.RedisService;
 import com.xu.seckill.redis.keysPrefix.GoodsKey;
 import com.xu.seckill.redis.keysPrefix.UserKey;
 import com.xu.seckill.service.GoodsService;
 import com.xu.seckill.service.MSService;
+import com.xu.seckill.util.UUIDUtil;
 import com.xu.seckill.vo.Person;
+import org.apache.rocketmq.client.exception.MQBrokerException;
+import org.apache.rocketmq.client.exception.MQClientException;
+import org.apache.rocketmq.common.message.Message;
+import org.apache.rocketmq.remoting.exception.RemotingException;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +27,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.annotation.Resource;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +55,7 @@ public class MsApplicationTests {
             tasks.add(new Callable<String>() {
                           @Override
                           public String call() throws Exception {
-                              return msService.seckill(1, 1);
+                              return msService.seckill(1, 2);
                           }
                       }
             );
@@ -104,6 +114,13 @@ public class MsApplicationTests {
 //        redisService.set(UserKey.ID, "id", p);
 //        System.out.println(redisService.get(UserKey.ID, "id"));
     }
+
+
+    @Autowired
+    RocketMQTemplate rocketMQTemplate;
+
+    @Autowired
+    MQSender mqSender;
 
 
 }

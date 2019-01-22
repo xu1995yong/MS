@@ -46,4 +46,8 @@ public class OrderService {
         return true;
     }
 
+    public int updateOrder(Order newOrder) {
+        return orderMapper.update(newOrder);
+    }
+
 }
