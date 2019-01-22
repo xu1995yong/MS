@@ -18,15 +18,6 @@ public class GoodsService {
     @Autowired
     GoodsMapper goodsMapper;
 
-    public List<Goods> getGoodsList() {
-        List<Goods> goodsList = (List<Goods>) redisService.get(GoodsKey.GOODS_LIST, "ALL");
-        if (Objects.isNull(goodsList)) {
-            goodsList = goodsMapper.getGoodslist();
-            redisService.set(GoodsKey.GOODS_LIST, "", goodsList);
-        }
-        return goodsList;
-    }
-
     public Goods getGoodsById(long goodsId) {
         Goods goods = (Goods) redisService.get(GoodsKey.GOODS_DETAIL, goodsId);
         if (Objects.isNull(goods)) {

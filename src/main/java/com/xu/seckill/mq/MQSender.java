@@ -34,8 +34,6 @@ public class MQSender {
 
         rocketMQTemplate.asyncSend(topic, order, new SendCallback() {
             public void onSuccess(SendResult var1) {
-                //     sendDelayMessage(order);
-
                 log.debug("async onSucess SendResult{}", var1);
             }
 
@@ -49,7 +47,7 @@ public class MQSender {
         long timeout = 3000;
 
         Message message = MessageBuilder.withPayload(order).build();
-        rocketMQTemplate.syncSend("OverTimeOrder", message, timeout, 4);
+        rocketMQTemplate.syncSend("OverTimeOrder", message, timeout, 6);
     }
 
 

@@ -3,6 +3,7 @@ package com.example.demo;
 import com.google.common.util.concurrent.RateLimiter;
 import com.xu.seckill.MsApplication;
 import com.xu.seckill.bean.Goods;
+import com.xu.seckill.controller.MSController;
 import com.xu.seckill.redis.RedisService;
 import com.xu.seckill.redis.keysPrefix.GoodsKey;
 import com.xu.seckill.service.GoodsService;
@@ -23,20 +24,20 @@ import java.util.concurrent.*;
 public class MsApplicationTests {
 
     @Autowired
-    private MSService msService;
+    private MSController msController;
 
     @Test
     public void testSeckill() throws InterruptedException, ExecutionException {
+        int limited = 0;
         int fail = 0;
         int success = 0;
-        ExecutorService pool = Executors.newFixedThreadPool(50);
+        ExecutorService pool = Executors.newFixedThreadPool(10);
         List<Callable<String>> tasks = new ArrayList<>();
         for (int i = 0; i < 1000; i++) {
-
             tasks.add(new Callable<String>() {
                           @Override
                           public String call() throws Exception {
-                              return msService.seckill(1, 1, 1);
+                              return msController.doSeckill(1, 1);
                           }
                       }
             );
@@ -45,18 +46,21 @@ public class MsApplicationTests {
 
         for (Future<String> f : futures) {
             String str = f.get();
-            if (Objects.isNull(str)) {
+            if (str.equals("LIMITED")) {
+                limited++;
+            } else if (str.equals("FAILED")) {
                 fail++;
-            } else {
+            } else if (str.equals("SUCCESS")) {
                 success++;
             }
 
         }
-        System.out.println("一共秒杀：" + (fail + success));
-        System.out.println("秒杀失败" + fail);
-        System.out.println("秒杀成功" + success);
-        pool.shutdown();
-        pool.awaitTermination(1000, TimeUnit.MILLISECONDS);
+        System.out.println("一共秒杀：" + (limited + fail + success));
+        System.out.println("速度受限：" + limited);
+        System.out.println("秒杀失败:" + fail);
+        System.out.println("秒杀成功:" + success);
+//        pool.shutdown();
+//        pool.awaitTermination(1000, TimeUnit.MILLISECONDS);
     }
 
     @Autowired
@@ -93,11 +97,5 @@ public class MsApplicationTests {
 //        System.out.println(redisService.get(UserKey.ID, "id"));
     }
 
-    @Test
-    public void testLimiter() {
 
-        RateLimiter rateLimiter = RateLimiter.create(2);
-
-
-    }
 }

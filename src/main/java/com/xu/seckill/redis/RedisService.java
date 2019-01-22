@@ -63,36 +63,23 @@ public class RedisService {
 
     public boolean decrStock(KeyPrefix prefix, Object key, int goodsCount) {
         String realKey = prefix.getPrefix() + key;
-        return stringRedisTemplate.opsForValue().decrement(realKey, goodsCount) >= 0;
 
+        SessionCallback<List<Long>> callback = new SessionCallback<List<Long>>() {
+            @Override
+            public List<Long> execute(RedisOperations operations) throws DataAccessException {
+                operations.watch(realKey);
+                operations.multi();
+                operations.opsForValue().decrement(realKey, goodsCount);
+                return operations.exec(); //包含事务中所有操作的结果
+            }
+        };
 
-//        long stock = Long.valueOf(stringRedisTemplate.opsForValue().get(realKey));
-//        if (stock > 0) {
-//            SessionCallback<List<Long>> callback = new SessionCallback<List<Long>>() {
-//                @Override
-//                public List<Long> execute(RedisOperations operations) throws DataAccessException {
-//                    operations.watch(realKey);
-//                    operations.multi();
-//                    operations.opsForValue().decrement(realKey);
-//                    return operations.exec(); //包含事务中所有操作的结果
-//                }
-//            };
-//            List<Long> txResults = stringRedisTemplate.execute(callback);
-//            //    log.debug("txResults {}", txResults);
-//
-//
-//            if (txResults.size() != 0) {
-//                stock = txResults.get(0);
-//                if (stock < 0) {
-//                    return 0;
-//                }
-//                return stock;
-//            } else {
-//                return -1;
-//            }
-//        } else {
-//            return 0;
-//        }
+        List<Long> txResults = stringRedisTemplate.execute(callback);
+        if (txResults.size() != 0) {
+            return txResults.get(0) >= 0;
+        } else {
+            return false;
+        }
     }
 
 }
