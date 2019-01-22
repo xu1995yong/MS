@@ -81,11 +81,8 @@ public class MSController {
             return Result.error(CodeMsg.ACCESS_LIMIT_REACHED);
         }
 
-        String orderId = seckillService.seckill(user.getId(), goodsId);
+        String orderId = seckillService.seckill(user.getId(), goodsId, 1);
         if (Objects.isNull(orderId)) {
-            log.debug("秒杀失败，请重试");
-            return Result.error(CodeMsg.ACCESS_LIMIT_REACHED);
-        } else if (orderId.equals("")) {
             log.debug("秒杀结束");
             return Result.error(CodeMsg.SECKILL_OVER);
         }

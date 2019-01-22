@@ -18,8 +18,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RocketMQMessageListener(topic = "MS", consumerGroup = "order-paid-consumer")
-public class MQReceiver implements RocketMQListener<Order> {
-    private static Logger log = LoggerFactory.getLogger(MQReceiver.class);
+public class OrderReceiver implements RocketMQListener<Order> {
+    private static Logger log = LoggerFactory.getLogger(OrderReceiver.class);
 
     @Autowired
     UserService userService;

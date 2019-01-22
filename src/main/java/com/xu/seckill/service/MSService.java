@@ -53,7 +53,7 @@ public class MSService {
     }
 
     //如果秒杀失败，返回空字符串，库存不足返回null，秒杀成功返回orderId
-    public String seckill(long userId, long goodsId) {
+    public String seckill(long userId, long goodsId, int goodsCount) {
         if (isOver.containsKey(goodsId) && isOver.get(goodsId)) {
             return null;
         }
@@ -71,26 +71,19 @@ public class MSService {
 //            return Result.error(CodeMsg.REPEATE_SECKILL);
 //        }
 
-
-        long stock = redisService.decr(GoodsKey.GOODS_STOCK, goodsId);
-        if (stock == -1) {
-            log.debug("秒杀失败");
-            return "";
-        } else if (stock == 0) {
-            log.debug("秒杀结束");
-            isOver.put(goodsId, true);
-            return null;
-        } else {
+        boolean success = redisService.decrStock(GoodsKey.GOODS_STOCK, goodsId, goodsCount);
+        if (success) {
             String orderId = UUIDUtil.uuid();
             int status = 0;
             Timestamp now = new Timestamp(System.currentTimeMillis());
-            Order order = new Order(orderId, userId, goodsId, 1, status, now);
+            Order order = new Order(orderId, userId, goodsId, goodsCount, status, now);
             log.debug("OrderId is {}", order);
             sender.asyncSendMessage(order);
             sender.sendDelayMessage(order);
             return orderId;
+        } else {
+            return null;
         }
-
     }
 
 

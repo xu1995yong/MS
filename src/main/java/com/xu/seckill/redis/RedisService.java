@@ -61,38 +61,38 @@ public class RedisService {
 //
 //    }
 
-    /**
-     * @return 如果库存不足，返回0，否则返回库存减一后的值  如果秒杀失败，返回-1
-     */
-    public long decr(KeyPrefix prefix, Object key) {
+    public boolean decrStock(KeyPrefix prefix, Object key, int goodsCount) {
         String realKey = prefix.getPrefix() + key;
-        long stock = Long.valueOf(stringRedisTemplate.opsForValue().get(realKey));
-        if (stock > 0) {
-            SessionCallback<List<Long>> callback = new SessionCallback<List<Long>>() {
-                @Override
-                public List<Long> execute(RedisOperations operations) throws DataAccessException {
-                    operations.watch(realKey);
-                    operations.multi();
-                    operations.opsForValue().decrement(realKey);
-                    return operations.exec(); //包含事务中所有操作的结果
-                }
-            };
-            List<Long> txResults = stringRedisTemplate.execute(callback);
-            //    log.debug("txResults {}", txResults);
+        return stringRedisTemplate.opsForValue().decrement(realKey, goodsCount) >= 0;
 
 
-            if (txResults.size() != 0) {
-                stock = txResults.get(0);
-                if (stock < 0) {
-                    return 0;
-                }
-                return stock;
-            } else {
-                return -1;
-            }
-        } else {
-            return 0;
-        }
+//        long stock = Long.valueOf(stringRedisTemplate.opsForValue().get(realKey));
+//        if (stock > 0) {
+//            SessionCallback<List<Long>> callback = new SessionCallback<List<Long>>() {
+//                @Override
+//                public List<Long> execute(RedisOperations operations) throws DataAccessException {
+//                    operations.watch(realKey);
+//                    operations.multi();
+//                    operations.opsForValue().decrement(realKey);
+//                    return operations.exec(); //包含事务中所有操作的结果
+//                }
+//            };
+//            List<Long> txResults = stringRedisTemplate.execute(callback);
+//            //    log.debug("txResults {}", txResults);
+//
+//
+//            if (txResults.size() != 0) {
+//                stock = txResults.get(0);
+//                if (stock < 0) {
+//                    return 0;
+//                }
+//                return stock;
+//            } else {
+//                return -1;
+//            }
+//        } else {
+//            return 0;
+//        }
     }
 
 }
