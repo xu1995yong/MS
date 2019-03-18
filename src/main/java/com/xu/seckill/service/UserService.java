@@ -36,26 +36,7 @@ public class UserService {
         return userMapper.getByPhone(phone);
     }
 
-    /**
-     * 典型缓存同步场景：更新密码
-     */
-//    public boolean updatePassword(String token, long id, String formPass) {
-//        // 取user
-//        User user = getById(id);
-//        if (user == null) {
-//            throw new GlobalException(CodeMsg.USER_ERROR);
-//        }
-//        // 更新数据库
-//        User toBeUpdate = new User();
-//        toBeUpdate.setId(id);
-//        toBeUpdate.setPassword(MD5Util.formPassToDBPass(formPass, user.getSalt()));
-//        userMapper.update(toBeUpdate);
-//        // 更新缓存：先删除再插入
-//        redisService.delete(UserKey.token, "" + id);
-//        user.setPassword(toBeUpdate.getPassword());
-//        redisService.set(UserKey.token, token, user);
-//        return true;
-//    }
+
     public String login(HttpServletRequest request, HttpServletResponse response, LoginVo loginVo) {
         if (loginVo == null) {
             throw new GlobalException(CodeMsg.SERVER_ERROR);

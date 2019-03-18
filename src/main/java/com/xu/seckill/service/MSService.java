@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.util.InvalidPropertiesFormatException;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -31,8 +32,6 @@ public class MSService {
     @Autowired
     MQSender sender;
 
-    //标注商品已经秒杀完
-    ConcurrentHashMap<Long, Boolean> isOver = new ConcurrentHashMap();
 
     private final String salt = "12sadasadsafafsafs。/。，";
 
@@ -52,11 +51,9 @@ public class MSService {
         return path.equals(str);
     }
 
-    //如果秒杀失败，返回空字符串，库存不足返回null，秒杀成功返回orderId
+
     public String seckill(long userId, long goodsId, int goodsCount) {
-        if (isOver.containsKey(goodsId) && isOver.get(goodsId)) {
-            return null;
-        }
+
 
         //将商品库存存入redis
         boolean exist = redisService.exists(GoodsKey.GOODS_STOCK, goodsId);
@@ -64,38 +61,32 @@ public class MSService {
             Goods goods = goodsService.getGoodsById(goodsId);
             redisService.set(GoodsKey.GOODS_STOCK, goods.getId(), goods.getStock());
         }
-
-//         判断重复秒杀
-//        SeckillOrder order = orderService.getOrderByUserIdGoodsId(user.getId(), goodsId);
-//        if (order != null) {
-//            return Result.error(CodeMsg.REPEATE_SECKILL);
-//        }
-
-        boolean success = redisService.decrStock(GoodsKey.GOODS_STOCK, goodsId, goodsCount);
-        if (success) {
-            String orderId = UUIDUtil.uuid();
-            int status = 0;
-            Timestamp now = new Timestamp(System.currentTimeMillis());
-            Order order = new Order(orderId, userId, goodsId, goodsCount, status, now);
-            log.debug("OrderId is {}", order);
-            sender.asyncSendMessage(order);
-            sender.sendDelayMessage(order);
-            return orderId;
-        } else {
-            return null;
+        //首先判断该商品秒杀是否结束，即商品库存是否剩余
+        int stock = redisService.getStock(GoodsKey.GOODS_STOCK, goodsId);
+        if (stock < 0) {
+            throw new RuntimeException("Redis中库存小于零，秒杀结束");
         }
+
+        long val = redisService.decrStock(GoodsKey.GOODS_STOCK, goodsId, goodsCount);
+        if (val < 0) {
+            throw new RuntimeException("秒杀失败");
+        }
+        String orderId = UUIDUtil.uuid();
+        int status = 0;
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        Order order = new Order(orderId, userId, goodsId, goodsCount, status, now);
+        log.debug("Order  is {}", order);
+        sender.asyncSendMessage(order);
+        sender.sendDelayMessage(order);
+        return orderId;
     }
 
 
-    // 保证这三个操作是一个事物
     @Transactional
     public boolean doSeckill(Order order) {
-        boolean reduceSuccess = goodsService.reduceGoodsStock(order.getGoodsId());
-        if (reduceSuccess) {
-            boolean createSuccess = orderService.createOrder(order);
-            return createSuccess;
-        }
-        return false;
+        goodsService.reduceGoodsStock(order.getGoodsId());
+        orderService.createOrder(order);
+        return true;
     }
 
 }

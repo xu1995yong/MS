@@ -3,6 +3,7 @@ package com.xu.seckill.controller;
 import com.xu.seckill.bean.Goods;
 import com.xu.seckill.bean.Order;
 import com.xu.seckill.bean.User;
+import com.xu.seckill.exception.GlobalException;
 import com.xu.seckill.redis.RedisService;
 import com.xu.seckill.result.CodeMsg;
 import com.xu.seckill.result.Result;
@@ -35,9 +36,7 @@ public class OrderController {
 
         Order order = orderService.getOrderById(orderId);
         if (order == null) {
-            String errMsg = "服务器忙，请稍后再试";
-            model.addAttribute("errMsg", errMsg);
-            return "seckillFail";
+            throw new GlobalException(CodeMsg.ORDER_NOT_EXIST);
         }
         long goodsId = order.getGoodsId();
         Goods goods = goodsService.getGoodsById(goodsId);
@@ -47,4 +46,8 @@ public class OrderController {
         return "orderDetail";
     }
 
+    @RequestMapping("/pay/{orderId}")
+    public void payOrder(Model model, @PathVariable("orderId") String orderId) {
+        Order order = orderService.getOrderById(orderId);
+    }
 }

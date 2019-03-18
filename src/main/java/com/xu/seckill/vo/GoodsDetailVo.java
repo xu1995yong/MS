@@ -1,4 +1,4 @@
-//package com.xu.seckill.vo;
+package com.xu.seckill.vo;//package com.xu.seckill.vo;
 //
 //import com.xu.seckill.bean.User;
 //

@@ -29,7 +29,7 @@ public class WebConfig implements WebMvcConfigurer {
         // 注册监控拦截器
         registry.addInterceptor(loginInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/goods/**", "/login/**", "/js/**", "/img/**", "/bootstrap/**", "/jquery-validation/**", "/layer/**");
+                .excludePathPatterns("/goods/**", "/login/**", "/js/**", "/img/**", "/bootstrap/**", "/jquery-validation/**", "/layer/**", "/error/**");
     }
 
 }

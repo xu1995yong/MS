@@ -57,7 +57,9 @@ function domiaosha(path) {
         success: function (data) {
             if (data.code == 0) {
                 layer.msg(data.data);
-                window.location = "/order/detail/" + data.data;
+                findOrder(data.data);
+
+
             } else {
                 layer.msg(data.data);
             }
@@ -69,3 +71,7 @@ function domiaosha(path) {
 }
 
 setInterval('remaintime()', 500);
+
+function findOrder(orderId) {
+    window.location = '/order/detail/' + orderId;
+}

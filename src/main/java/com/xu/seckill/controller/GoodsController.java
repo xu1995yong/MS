@@ -30,11 +30,8 @@ public class GoodsController {
 
     @RequestMapping(value = "/list")
     public String list(Model model) {
-
         List<Goods> goodsList = goodsService.getGoodsList();
-        //  model.addAttribute("user", user);
         model.addAttribute("goodsList", goodsList);
-
         return "goodsList";
     }
 
