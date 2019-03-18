@@ -5,10 +5,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.redis.core.*;
+import org.springframework.data.redis.core.RedisOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SessionCallback;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Service
@@ -20,16 +22,18 @@ public class RedisService {
     @Autowired
     StringRedisTemplate stringRedisTemplate;
 
-    @PostConstruct
-    public void initStock() {
-        //初始化库存
-        //    log.debug("RedisService 已经初始化成功");
-
-    }
 
     public Object get(KeyPrefix prefix, Object key) {
         String realKey = prefix.getPrefix() + key;
         return redisTemplate.opsForValue().get(realKey);
+    }
+
+    public int getStock(KeyPrefix prefix, Object key) {
+        String realKey = prefix.getPrefix() + key;
+        if (!exists(prefix, key)) {
+            throw new RuntimeException("key不存在:" + realKey);
+        }
+        return Integer.valueOf(stringRedisTemplate.opsForValue().get(realKey));
     }
 
 //    public Object getAll(KeyPrefix prefix, String key) {
@@ -53,7 +57,7 @@ public class RedisService {
         return stringRedisTemplate.hasKey(realKey);
     }
 
-//    public <T> Long incr(KeyPrefix prefix, String key) {
+    //    public <T> Long incr(KeyPrefix prefix, String key) {
 //
 //        String realKey = prefix.getPrefix() + key;
 ////		return jedis.incr(realKey);
@@ -61,7 +65,9 @@ public class RedisService {
 //
 //    }
 
-    public boolean decrStock(KeyPrefix prefix, Object key, int goodsCount) {
+    //redis预减库存
+    public long decrStock(KeyPrefix prefix, Object key, int goodsCount) {
+        //redis中是否存在该key
         String realKey = prefix.getPrefix() + key;
 
         SessionCallback<List<Long>> callback = new SessionCallback<List<Long>>() {
@@ -75,11 +81,12 @@ public class RedisService {
         };
 
         List<Long> txResults = stringRedisTemplate.execute(callback);
-        if (txResults.size() != 0) {
-            return txResults.get(0) >= 0;
-        } else {
-            return false;
+        if ((txResults.size() == 0)) {
+            return -1;
         }
-    }
 
+        return txResults.get(0);
+    }
 }
+
+

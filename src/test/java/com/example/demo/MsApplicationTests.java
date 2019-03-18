@@ -37,7 +37,7 @@ public class MsApplicationTests {
             tasks.add(new Callable<String>() {
                           @Override
                           public String call() throws Exception {
-                              return msController.doSeckill(1, 1);
+                              return "";
                           }
                       }
             );

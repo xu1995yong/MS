@@ -4,6 +4,8 @@ import com.xu.seckill.bean.Goods;
 import com.xu.seckill.mapper.GoodsMapper;
 import com.xu.seckill.redis.RedisService;
 import com.xu.seckill.redis.keysPrefix.GoodsKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,7 @@ import java.util.Objects;
 
 @Service
 public class GoodsService {
+    private static Logger log = LoggerFactory.getLogger(GoodsService.class);
     @Autowired
     RedisService redisService;
 
@@ -27,8 +30,20 @@ public class GoodsService {
         return goods;
     }
 
-    public boolean reduceGoodsStock(Long goodsId) {
-        int ret = goodsMapper.reduceGoodsStock(goodsId);
-        return ret > 0;
+    public List<Goods> getGoodsList() {
+        List<Goods> goodsList = (List<Goods>) redisService.get(GoodsKey.GOODS_LIST, "ALL");
+        if (Objects.isNull(goodsList)) {
+            goodsList = goodsMapper.getGoodslist();
+            redisService.set(GoodsKey.GOODS_LIST, "", goodsList);
+        }
+        return goodsList;
+    }
+
+    public void reduceGoodsStock(Long goodsId) {
+        log.debug("减少库存,商品id为{}", goodsId);
+        if (goodsMapper.reduceGoodsStock(goodsId) != 1) {
+            throw new RuntimeException("减少库存失败！ goodsId = " + goodsId);
+        }
+
     }
 }
