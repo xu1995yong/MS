@@ -67,8 +67,8 @@ public class MSService {
             throw new RuntimeException("Redis中库存小于零，秒杀结束");
         }
 
-        long val = redisService.decrStock(GoodsKey.GOODS_STOCK, goodsId, goodsCount);
-        if (val < 0) {
+        boolean success = redisService.decrStock(GoodsKey.GOODS_STOCK, goodsId, goodsCount);
+        if (!success) {
             throw new RuntimeException("秒杀失败");
         }
         String orderId = UUIDUtil.uuid();
@@ -84,8 +84,14 @@ public class MSService {
 
     @Transactional
     public boolean doSeckill(Order order) {
-        goodsService.reduceGoodsStock(order.getGoodsId());
-        orderService.createOrder(order);
+        try {
+            goodsService.reduceGoodsStock(order.getGoodsId());
+            orderService.createOrder(order);
+        } catch (Exception e) {
+            redisService.delete(GoodsKey.GOODS_STOCK, order.getGoodsId());
+            System.out.println(e);
+            throw e;
+        }
         return true;
     }
 

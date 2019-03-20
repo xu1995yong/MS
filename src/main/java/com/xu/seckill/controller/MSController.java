@@ -72,9 +72,7 @@ public class MSController {
     @ResponseBody
     public Result<String> doSeckill(User user, @RequestParam("goodsId") long goodsId, @PathVariable("uuidPath") String path) {
 
-//        if (!rateLimiter.tryAcquire(1, TimeUnit.MILLISECONDS)) {
-//            retVal = "LIMITED";
-//        }
+       
         if (!seckillService.validPath(path, goodsId)) {
             log.debug("路径验证错误");
             return Result.error(CodeMsg.PATH_ERROR);

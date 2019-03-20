@@ -24,7 +24,7 @@ import java.util.concurrent.*;
 public class MsApplicationTests {
 
     @Autowired
-    private MSController msController;
+    private MSService seckillService;
 
     @Test
     public void testSeckill() throws InterruptedException, ExecutionException {
@@ -34,33 +34,30 @@ public class MsApplicationTests {
         ExecutorService pool = Executors.newFixedThreadPool(10);
         List<Callable<String>> tasks = new ArrayList<>();
         for (int i = 0; i < 1000; i++) {
-            tasks.add(new Callable<String>() {
-                          @Override
-                          public String call() throws Exception {
-                              return "";
-                          }
-                      }
-            );
+            Callable<String> task = new Callable() {
+                @Override
+                public String call() throws Exception {
+                    String orderId = seckillService.seckill(1, 1, 1);
+                    return orderId;
+                }
+            };
+            tasks.add(task);
         }
         List<Future<String>> futures = pool.invokeAll(tasks);
 
         for (Future<String> f : futures) {
-            String str = f.get();
-            if (str.equals("LIMITED")) {
-                limited++;
-            } else if (str.equals("FAILED")) {
-                fail++;
-            } else if (str.equals("SUCCESS")) {
-                success++;
-            }
+            try {
+                String str = f.get();
 
+
+            } catch (Exception e) {
+                // System.out.println(e);
+            }
         }
-        System.out.println("一共秒杀：" + (limited + fail + success));
-        System.out.println("速度受限：" + limited);
-        System.out.println("秒杀失败:" + fail);
-        System.out.println("秒杀成功:" + success);
-//        pool.shutdown();
-//        pool.awaitTermination(1000, TimeUnit.MILLISECONDS);
+
+        pool.awaitTermination(1000, TimeUnit.MILLISECONDS);
+
+        Thread.sleep(10000);
     }
 
     @Autowired

@@ -27,20 +27,12 @@
 2. 使用redis防止同一用户同时对多个商品进行秒杀。以用户Id为key
 3. 使用rocketmq的延迟队列，实现未付款订单的及时关闭
 
-### 秒杀系统业务实现原理
-1. 秒杀入口隐藏：
 
-2. Redis乐观锁
-
-3. 单点登录：同域下的单点登录
-
- 
 
 ### 接下来要学习的知识点
 - SpringBoot 自定义方法参数解析器HandlerMethodArgumentResolver
 - SpringBoot 拦截器做登录验证
 - WebMvcConfigurer接口
-- Redis实现乐观锁的原理
  
 
  
@@ -50,5 +42,3 @@ SpringBoot 测试模块 自动注入失败，要在@SpringBootTest注解中加�
 
 docker命令 启动一个已经停止的容器 docker start 重启容器 docker restart 停止容器 docker stop
 
-### 问题记录
-为什么redis是单线程的，

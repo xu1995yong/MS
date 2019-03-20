@@ -1,13 +1,7 @@
 package com.xu.seckill.mq;
 
-import com.xu.seckill.bean.Goods;
 import com.xu.seckill.bean.Order;
-import com.xu.seckill.redis.RedisService;
-import com.xu.seckill.redis.keysPrefix.OrderKey;
-import com.xu.seckill.result.CodeMsg;
-import com.xu.seckill.service.GoodsService;
 import com.xu.seckill.service.MSService;
-import com.xu.seckill.service.OrderService;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.slf4j.Logger;
@@ -30,6 +24,5 @@ public class OrderReceiver implements RocketMQListener<Order> {
 
         seckillService.doSeckill(order);
     }
-
 
 }
