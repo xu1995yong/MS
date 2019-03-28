@@ -40,10 +40,7 @@ public class MSController {
     // 基于令牌桶算法的限流实现类
     RateLimiter rateLimiter = RateLimiter.create(10);
 
-    /***
-     * 为了防止用户不断调用秒杀地址接口来，需要在秒杀开始时才创建商品秒杀的url，并保存在redis中。
-     * 每次的url都不一样，只有真正点击秒杀按钮，才会根据商品生成对应的秒杀接口地址。
-     */
+
     @RequestMapping("/getPath")
     @ResponseBody
     public Result<String> getPath(@RequestParam("goodsId") long goodsId) {
